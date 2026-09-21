@@ -1,9 +1,14 @@
+import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import Footer from '../../components/footer/footer';
 
 function FavoritesPage(): JSX.Element {
   return (
     <div className="page">
+      <Helmet>
+        <title>Favorites</title>
+      </Helmet>
+
       <Header />
 
       <main className="page__main page__main--favorites">

@@ -1,8 +1,16 @@
+import {useParams} from 'react-router-dom';
+import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 
 function OfferPage(): JSX.Element {
+  const { id } = useParams();
+
   return (
     <div className="page">
+      <Helmet>
+        <title>Offer {id}</title>
+      </Helmet>
+
       <Header />
 
       <main className="page__main page__main--offer">
