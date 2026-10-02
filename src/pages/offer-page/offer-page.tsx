@@ -42,7 +42,7 @@ function OfferPage(): JSX.Element {
     try {
       try {
         const { data } = await api.post<Review>(`${APIRoute.Comments}/${id}`, newComment);
-        setReviews(reviews?.concat([data]));
+        setReviews([data].concat(reviews as Reviews).slice(0, 10));
         return true;
       } catch {
         toast.error('Failed to submit new comment!');
@@ -57,18 +57,18 @@ function OfferPage(): JSX.Element {
     const api = createAPI();
     setIsNeedScroll(true);
 
-    api.get(`${APIRoute.Offers}/${id}`)
-      .then(({data}) => setFoundOffer(data as OfferInfo))
+    api.get<OfferInfo>(`${APIRoute.Offers}/${id}`)
+      .then(({data}) => setFoundOffer(data))
       .catch(() => {
         setIsFound(false);
       });
 
-    api.get(`${APIRoute.Comments}/${id}`)
-      .then(({data}) => setReviews(data as Reviews))
+    api.get<Reviews>(`${APIRoute.Comments}/${id}`)
+      .then(({data}) => setReviews(data.slice(0, 10)))
       .catch(() => toast.error('Failed to load comments!'));
 
-    api.get(`${APIRoute.Offers}/${id}/nearby`)
-      .then(({data}) => setNearestOffers(data as Offers))
+    api.get<Offers>(`${APIRoute.Offers}/${id}/nearby`)
+      .then(({data}) => setNearestOffers(data))
       .catch(() => toast.error('Failed to load nearest offers!'));
   }, [id]);
 
@@ -106,7 +106,7 @@ function OfferPage(): JSX.Element {
                 <h1 className="offer__name">
                   {foundOffer.title}
                 </h1>
-                <button className="offer__bookmark-button button" type="button">
+                <button className={`offer__bookmark-button ${foundOffer.isFavorite && 'offer__bookmark-button--active'} button`} type="button">
                   <svg className="offer__bookmark-icon" width="31" height="33">
                     <use xlinkHref="#icon-bookmark"></use>
                   </svg>
@@ -115,7 +115,7 @@ function OfferPage(): JSX.Element {
               </div>
               <div className="offer__rating rating">
                 <div className="offer__stars rating__stars">
-                  <span style={{width: `${foundOffer.rating * 20}%`}}></span>
+                  <span style={{width: `${Math.round(foundOffer.rating) * 20}%`}}></span>
                   <span className="visually-hidden">Rating</span>
                 </div>
                 <span className="offer__rating-value rating__value">{foundOffer.rating}</span>
