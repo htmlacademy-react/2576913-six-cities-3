@@ -20,7 +20,6 @@ import {createAPI} from '../../services/api';
 function OfferPage(): JSX.Element {
   const [isNeedScroll, setIsNeedScroll] = useState(false);
   const [isFound, setIsFound] = useState(true);
-  const [isDisabledReviewForm, setDisabledReviewForm] = useState(false);
   const [foundOffer, setFoundOffer] = useState<Nullable<OfferInfo>>(null);
   const [reviews, setReviews] = useState<Nullable<Reviews>>(null);
   const [nearestOffers, setNearestOffers] = useState<Nullable<Offers>>(null);
@@ -37,19 +36,14 @@ function OfferPage(): JSX.Element {
   const handleReviewSubmit = async (newComment: FormData): Promise<boolean> => {
     const api = createAPI();
     setIsNeedScroll(false);
-    setDisabledReviewForm(true);
 
     try {
-      try {
-        const { data } = await api.post<Review>(`${APIRoute.Comments}/${id}`, newComment);
-        setReviews([data].concat(reviews as Reviews).slice(0, 10));
-        return true;
-      } catch {
-        toast.error('Failed to submit new comment!');
-        return false;
-      }
-    } finally {
-      setDisabledReviewForm(false);
+      const { data } = await api.post<Review>(`${APIRoute.Comments}/${id}`, newComment);
+      setReviews([data].concat(reviews as Reviews).slice(0, 10));
+      return true;
+    } catch {
+      toast.error('Failed to submit new comment!');
+      return false;
     }
   };
 
@@ -167,7 +161,6 @@ function OfferPage(): JSX.Element {
                 <ReviewForm
                   key={id}
                   onSubmit={handleReviewSubmit}
-                  isDisabled={isDisabledReviewForm}
                 />}
               </section>
             </div>

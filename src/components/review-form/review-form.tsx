@@ -9,7 +9,6 @@ export type FormData = {
 
 type ReviewFormProps = {
   onSubmit: (data: FormData) => Promise<boolean>;
-  isDisabled: boolean;
 };
 
 const rating = [
@@ -20,8 +19,9 @@ const rating = [
   {value: 1, label: 'terribly'},
 ];
 
-function ReviewForm({onSubmit, isDisabled}: ReviewFormProps): JSX.Element {
+function ReviewForm({onSubmit}: ReviewFormProps): JSX.Element {
   const [review, setReview] = useState<FormData>({rating: 0, comment: ''});
+  const [isDisabled, setIsDisabled] = useState(false);
 
   const handleReviewChange: ChangeHandler = (evt) => {
     const { name, value } = evt.currentTarget;
@@ -30,10 +30,13 @@ function ReviewForm({onSubmit, isDisabled}: ReviewFormProps): JSX.Element {
 
   const handleSubmit = async (evt: FormEvent) => {
     evt.preventDefault();
+    setIsDisabled(true);
+
     const isSubmitted = await onSubmit(review);
     if (isSubmitted) {
       setReview({rating: 0, comment: ''});
     }
+    setIsDisabled(false);
   };
 
   return (
