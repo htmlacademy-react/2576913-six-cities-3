@@ -2,12 +2,13 @@ import {Helmet} from 'react-helmet-async';
 import {useRef, FormEvent} from 'react';
 import {Navigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../hooks/store';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
 import {loginAction} from '../../store/api-actions';
 import Logo from '../../components/logo/logo';
-import {AuthorizationStatus, AppRoute, NameSpace} from '../../const';
+import {AuthorizationStatus, AppRoute} from '../../const';
 
 function LoginPage(): JSX.Element {
-  const authorizationStatus = useAppSelector((state) => state[NameSpace.User].authorizationStatus);
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);

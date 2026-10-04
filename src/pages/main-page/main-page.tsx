@@ -5,11 +5,13 @@ import Header from '../../components/header/header';
 import Locations from '../../components/locations/locations';
 import OffersSection from '../../components/offers-section/offers-section';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
-import {CITIES, NameSpace} from '../../const';
+import {getOffers} from '../../store/offers-data/selectors';
+import {getCurrentCity} from '../../store/offers-process/selectors';
+import {CITIES} from '../../const';
 
 function MainPage(): JSX.Element {
-  const offers = useAppSelector((state) => state[NameSpace.Data].offers);
-  const currentCity = useAppSelector((state) => state[NameSpace.Offers].city);
+  const offers = useAppSelector(getOffers);
+  const currentCity = useAppSelector(getCurrentCity);
   const currentCityData = CITIES.find((city) => city.name === currentCity);
   const currentOffers = offers.filter((offer) => offer.city.name === currentCity);
 

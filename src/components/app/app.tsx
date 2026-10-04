@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {HelmetProvider} from 'react-helmet-async';
-import {AppRoute, NameSpace} from '../../const';
+import {AppRoute} from '../../const';
 import Loader from '../loader/loader';
 import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
@@ -8,10 +8,11 @@ import FavoritesPage from '../../pages/favorites-page/favorites-page';
 import OfferPage from '../../pages/offer-page/offer-page';
 import NotFoundPage from '../../pages/not-found-page/not-found-page';
 import PrivateRoute from '../private-route/private-route';
+import {getOffersDataLoadingStatus} from '../../store/offers-data/selectors';
 import {useAppSelector} from '../../hooks/store';
 
 function App(): JSX.Element {
-  const isOffersDataLoading = useAppSelector((state) => state[NameSpace.Data].isOffersDataLoading);
+  const isOffersDataLoading = useAppSelector(getOffersDataLoadingStatus);
 
   if (isOffersDataLoading) {
     return <Loader />;
