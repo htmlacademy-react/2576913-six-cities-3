@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 type OfferCardProps = {
   offer: Offer;
   onHover: (offer?: Offer) => void;
-  offerType: 'city' | 'nearest';
+  offerType: 'city' | 'nearest' | 'favorite';
 };
 
 function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
@@ -23,7 +23,8 @@ function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
     <article className={cn(
       'place-card',
       {'cities__card': offerType === 'city'},
-      {'near-places__card': offerType === 'nearest'}
+      {'near-places__card': offerType === 'nearest'},
+      {'favorites__card': offerType === 'favorite'}
     )} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}
     >
       {isPremium &&
@@ -33,7 +34,8 @@ function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
       <div className={cn(
         'place-card__image-wrapper',
         {'cities__image-wrapper': offerType === 'city'},
-        {'near-places__image-wrapper': offerType === 'nearest'}
+        {'near-places__image-wrapper': offerType === 'nearest'},
+        {'favorites__image-wrapper': offerType === 'favorite'}
       )}
       >
         <Link to={`/offer/${id}`}>
