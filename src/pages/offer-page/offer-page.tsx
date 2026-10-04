@@ -3,6 +3,7 @@ import {useParams} from 'react-router-dom';
 import {Helmet} from 'react-helmet-async';
 import {toast} from 'react-toastify';
 import Header from '../../components/header/header';
+import OfferDescription from '../../components/offer-description/offer-description';
 import ReviewsList from '../../components/reviews-list/reviews-list';
 import ReviewForm, {FormData} from '../../components/review-form/review-form';
 import Map from '../../components/map/map';
@@ -92,76 +93,12 @@ function OfferPage(): JSX.Element {
           </div>
           <div className="offer__container container">
             <div className="offer__wrapper">
-              {foundOffer.isPremium &&
-              <div className="offer__mark">
-                <span>Premium</span>
-              </div>}
-              <div className="offer__name-wrapper">
-                <h1 className="offer__name">
-                  {foundOffer.title}
-                </h1>
-                <button className={`offer__bookmark-button ${foundOffer.isFavorite && 'offer__bookmark-button--active'} button`} type="button">
-                  <svg className="offer__bookmark-icon" width="31" height="33">
-                    <use xlinkHref="#icon-bookmark"></use>
-                  </svg>
-                  <span className="visually-hidden">To bookmarks</span>
-                </button>
-              </div>
-              <div className="offer__rating rating">
-                <div className="offer__stars rating__stars">
-                  <span style={{width: `${Math.round(foundOffer.rating) * 20}%`}}></span>
-                  <span className="visually-hidden">Rating</span>
-                </div>
-                <span className="offer__rating-value rating__value">{foundOffer.rating}</span>
-              </div>
-              <ul className="offer__features">
-                <li className="offer__feature offer__feature--entire">
-                  {foundOffer.type}
-                </li>
-                <li className="offer__feature offer__feature--bedrooms">
-                  {foundOffer.bedrooms} Bedrooms
-                </li>
-                <li className="offer__feature offer__feature--adults">
-                  Max {foundOffer.maxAdults} adult{foundOffer.maxAdults > 1 && 's'}
-                </li>
-              </ul>
-              <div className="offer__price">
-                <b className="offer__price-value">&euro;{foundOffer.price}</b>
-                <span className="offer__price-text">&nbsp;night</span>
-              </div>
-              <div className="offer__inside">
-                <h2 className="offer__inside-title">What&apos;s inside</h2>
-                <ul className="offer__inside-list">
-                  {foundOffer.goods.map((item) => <li className="offer__inside-item" key={item}>{item}</li>)}
-                </ul>
-              </div>
-              <div className="offer__host">
-                <h2 className="offer__host-title">Meet the host</h2>
-                <div className="offer__host-user user">
-                  <div className={`offer__avatar-wrapper ${foundOffer.host.isPro && 'offer__avatar-wrapper--pro'} user__avatar-wrapper`}>
-                    <img className="offer__avatar user__avatar" src={foundOffer.host.avatarUrl} width="74" height="74" alt="Host avatar" />
-                  </div>
-                  <span className="offer__user-name">
-                    {foundOffer.host.name}
-                  </span>
-                  <span className="offer__user-status">
-                    {foundOffer.host.isPro && 'Pro'}
-                  </span>
-                </div>
-                <div className="offer__description">
-                  <p className="offer__text">
-                    {foundOffer.description}
-                  </p>
-                </div>
-              </div>
+              <OfferDescription offer={foundOffer} />
               <section className="offer__reviews reviews">
                 <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length}</span></h2>
                 <ReviewsList reviews={reviews} />
                 {authorizationStatus === AuthorizationStatus.Auth &&
-                <ReviewForm
-                  key={id}
-                  onSubmit={handleReviewSubmit}
-                />}
+                <ReviewForm onSubmit={handleReviewSubmit} />}
               </section>
             </div>
           </div>
