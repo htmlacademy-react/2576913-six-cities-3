@@ -6,6 +6,7 @@ import {Offers, CityName} from './offers';
 export type UserProcess = {
   authorizationStatus: AuthorizationStatus;
   userData: UserData | null;
+  favoritesOffers: Offers;
 };
 
 export type OffersProcess = {

@@ -60,3 +60,15 @@ export const logoutAction = createAsyncThunk<void, undefined, {
     }
   },
 );
+
+export const fetchFavoritesOffers = createAsyncThunk<Offers, undefined, {
+  dispatch: AppDispatch;
+  state: RootState;
+  extra: AxiosInstance;
+}>(
+  'user/getFavoritesOffers',
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get<Offers>(APIRoute.Favorite);
+    return data;
+  },
+);

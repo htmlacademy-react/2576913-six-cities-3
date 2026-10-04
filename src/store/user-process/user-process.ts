@@ -2,11 +2,12 @@ import {createSlice} from '@reduxjs/toolkit';
 import {toast} from 'react-toastify';
 import {AuthorizationStatus, NameSpace} from '../../const';
 import {UserProcess} from '../../types/store';
-import {checkAuthAction, loginAction, logoutAction} from '../api-actions';
+import {checkAuthAction, loginAction, logoutAction, fetchFavoritesOffers} from '../api-actions';
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
   userData: null,
+  favoritesOffers: [],
 };
 
 export const userProcess = createSlice({
@@ -21,6 +22,7 @@ export const userProcess = createSlice({
       })
       .addCase(checkAuthAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
+        toast.warn('You are not logged!');
       })
       .addCase(loginAction.fulfilled, (state, action) => {
         state.authorizationStatus = AuthorizationStatus.Auth;
@@ -33,6 +35,12 @@ export const userProcess = createSlice({
       .addCase(logoutAction.fulfilled, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
         state.userData = null;
+      })
+      .addCase(fetchFavoritesOffers.fulfilled, (state, action) => {
+        state.favoritesOffers = action.payload;
+      })
+      .addCase(fetchFavoritesOffers.rejected, () => {
+        toast.warn('You are not logged! Failed to load favorites offers!');
       });
   }
 });
