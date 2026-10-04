@@ -1,5 +1,4 @@
 import {Helmet} from 'react-helmet-async';
-import {Link} from 'react-router-dom';
 import Header from '../../components/header/header';
 import OfferCard from '../../components/offer-card/offer-card';
 import Footer from '../../components/footer/footer';
