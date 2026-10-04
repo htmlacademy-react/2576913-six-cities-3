@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {toast} from 'react-toastify';
 import {NameSpace} from '../../const';
 import {OffersData} from '../../types/store';
 import {fetchOffersAction} from '../api-actions';
@@ -20,6 +21,10 @@ export const offersData = createSlice({
       .addCase(fetchOffersAction.fulfilled, (state, action) => {
         state.offers = action.payload;
         state.isOffersDataLoading = false;
+      })
+      .addCase(fetchOffersAction.rejected, (state) => {
+        state.isOffersDataLoading = false;
+        toast.error('Failed to load offers!');
       });
   },
 });

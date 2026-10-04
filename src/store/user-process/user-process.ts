@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import {toast} from 'react-toastify';
 import {AuthorizationStatus, NameSpace} from '../../const';
 import {UserProcess} from '../../types/store';
 import {checkAuthAction, loginAction, logoutAction} from '../api-actions';
@@ -27,6 +28,7 @@ export const userProcess = createSlice({
       })
       .addCase(loginAction.rejected, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
+        toast.error('Failed to login!');
       })
       .addCase(logoutAction.fulfilled, (state) => {
         state.authorizationStatus = AuthorizationStatus.NoAuth;
