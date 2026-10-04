@@ -14,7 +14,7 @@ import ScrollToTop from '../../components/scroll-to-top/scroll-to-top';
 import {City, Offers, OfferInfo, Offer} from '../../types/offers';
 import {Reviews, Review} from '../../types/reviews';
 import {useAppSelector} from '../../hooks/store';
-import {CITIES, APIRoute, AuthorizationStatus} from '../../const';
+import {CITIES, APIRoute, AuthorizationStatus, NameSpace} from '../../const';
 import {Nullable} from 'vitest';
 import {createAPI} from '../../services/api';
 
@@ -27,12 +27,12 @@ function OfferPage(): JSX.Element {
 
   const { id } = useParams();
 
-  const currentCity = useAppSelector((state) => state.city);
+  const currentCity = useAppSelector((state) => state[NameSpace.Offers].city);
   const currentCityData = CITIES.find((city) => city.name === currentCity);
-  const currentOffer = useAppSelector((state) => state.offers).find((offer) => offer.id === id);
+  const currentOffer = useAppSelector((state) => state[NameSpace.Data].offers).find((offer) => offer.id === id);
   const offersForMap = nearestOffers?.slice(0, 3);
   offersForMap?.push(currentOffer as Offer);
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const authorizationStatus = useAppSelector((state) => state[NameSpace.User].authorizationStatus);
 
   const handleReviewSubmit = async (newComment: FormData): Promise<boolean> => {
     const api = createAPI();

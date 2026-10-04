@@ -1,6 +1,6 @@
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import {HelmetProvider} from 'react-helmet-async';
-import {AppRoute} from '../../const';
+import {AppRoute, NameSpace} from '../../const';
 import Loader from '../loader/loader';
 import MainPage from '../../pages/main-page/main-page';
 import LoginPage from '../../pages/login-page/login-page';
@@ -11,7 +11,7 @@ import PrivateRoute from '../private-route/private-route';
 import {useAppSelector} from '../../hooks/store';
 
 function App(): JSX.Element {
-  const isOffersDataLoading = useAppSelector((state) => state.isOffersDataLoading);
+  const isOffersDataLoading = useAppSelector((state) => state[NameSpace.Data].isOffersDataLoading);
 
   if (isOffersDataLoading) {
     return <Loader />;

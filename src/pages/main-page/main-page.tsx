@@ -1,15 +1,15 @@
 import cn from 'classnames';
 import {City} from '../../types/offers';
-import {setCity} from '../../store/action';
+import {setCity} from '../../store/offers-process/offers-process';
 import Header from '../../components/header/header';
 import Locations from '../../components/locations/locations';
 import OffersSection from '../../components/offers-section/offers-section';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
-import {CITIES} from '../../const';
+import {CITIES, NameSpace} from '../../const';
 
 function MainPage(): JSX.Element {
-  const offers = useAppSelector((state) => state.offers);
-  const currentCity = useAppSelector((state) => state.city);
+  const offers = useAppSelector((state) => state[NameSpace.Data].offers);
+  const currentCity = useAppSelector((state) => state[NameSpace.Offers].city);
   const currentCityData = CITIES.find((city) => city.name === currentCity);
   const currentOffers = offers.filter((offer) => offer.city.name === currentCity);
 

@@ -5,62 +5,43 @@ import {AppDispatch, RootState} from '../types/store';
 import {Offers} from '../types/offers';
 import {AuthData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
-import {setOffers, setOffersDataLoadingStatus, requireAuthorization, setUserData} from './action';
 import {saveToken, dropToken} from '../services/token';
-import {APIRoute, AuthorizationStatus} from '../const';
+import {APIRoute} from '../const';
 
-export const fetchOffersAction = createAsyncThunk<void, undefined, {
+export const fetchOffersAction = createAsyncThunk<Offers, undefined, {
   dispatch: AppDispatch;
   state: RootState;
   extra: AxiosInstance;
 }>(
   'data/fetchOffers',
-  async (_arg, {dispatch, extra: api}) => {
-    dispatch(setOffersDataLoadingStatus(true));
-
-    try {
-      const {data} = await api.get<Offers>(APIRoute.Offers);
-      dispatch(setOffers(data));
-    } catch {
-      toast.error('Failed to load offers!');
-    } finally {
-      dispatch(setOffersDataLoadingStatus(false));
-    }
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get<Offers>(APIRoute.Offers);
+    return data;
   },
 );
 
-export const checkAuthAction = createAsyncThunk<void, undefined, {
+export const checkAuthAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch;
   state: RootState;
   extra: AxiosInstance;
 }>(
   'user/checkAuth',
-  async (_arg, {dispatch, extra: api}) => {
-    try {
-      const {data} = await api.get<UserData>(APIRoute.Login);
-      dispatch(requireAuthorization(AuthorizationStatus.Auth));
-      dispatch(setUserData(data));
-    } catch {
-      dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
-    }
-  },
+  async (_arg, {extra: api}) => {
+    const {data} = await api.get<UserData>(APIRoute.Login);
+    return data;
+  }
 );
 
-export const loginAction = createAsyncThunk<void, AuthData, {
+export const loginAction = createAsyncThunk<UserData, AuthData, {
   dispatch: AppDispatch;
   state: RootState;
   extra: AxiosInstance;
 }>(
   'user/login',
-  async ({email, password}, {dispatch, extra: api}) => {
-    try {
-      const {data} = await api.post<UserData>(APIRoute.Login, {email, password});
-      saveToken(data.token);
-      dispatch(requireAuthorization(AuthorizationStatus.Auth));
-      dispatch(setUserData(data));
-    } catch {
-      toast.error('Login failed!');
-    }
+  async ({email, password}, {extra: api}) => {
+    const {data} = await api.post<UserData>(APIRoute.Login, {email, password});
+    saveToken(data.token);
+    return data;
   },
 );
 
@@ -70,12 +51,10 @@ export const logoutAction = createAsyncThunk<void, undefined, {
   extra: AxiosInstance;
 }>(
   'user/logout',
-  async (_arg, {dispatch, extra: api}) => {
+  async (_arg, {extra: api}) => {
     try {
       await api.delete(APIRoute.Logout);
       dropToken();
-      dispatch(requireAuthorization(AuthorizationStatus.NoAuth));
-      dispatch(setUserData(null));
     } catch {
       toast.error('Logout failed!');
     }

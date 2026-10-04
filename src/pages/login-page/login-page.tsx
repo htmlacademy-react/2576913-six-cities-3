@@ -4,10 +4,10 @@ import {Navigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../hooks/store';
 import {loginAction} from '../../store/api-actions';
 import Logo from '../../components/logo/logo';
-import {AuthorizationStatus, AppRoute} from '../../const';
+import {AuthorizationStatus, AppRoute, NameSpace} from '../../const';
 
 function LoginPage(): JSX.Element {
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
+  const authorizationStatus = useAppSelector((state) => state[NameSpace.User].authorizationStatus);
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);

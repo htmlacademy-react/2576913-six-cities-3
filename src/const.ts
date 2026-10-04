@@ -20,6 +20,12 @@ enum AuthorizationStatus {
   Unknown = 'UNKNOWN',
 }
 
+enum NameSpace {
+  Offers = 'OFFERS',
+  User = 'USER',
+  Data = 'DATA',
+}
+
 const URL_MARKER_DEFAULT = '/img/pin.svg';
 const URL_MARKER_ACTIVE = '/img/pin-active.svg';
 
@@ -81,4 +87,4 @@ enum SortingType {
   Rating = 'RATING',
 }
 
-export {AppRoute, APIRoute, AuthorizationStatus, URL_MARKER_ACTIVE, URL_MARKER_DEFAULT, CITIES, SortingType};
+export {AppRoute, APIRoute, AuthorizationStatus, NameSpace, URL_MARKER_ACTIVE, URL_MARKER_DEFAULT, CITIES, SortingType};

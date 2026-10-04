@@ -1,13 +1,13 @@
 import {Link} from 'react-router-dom';
 import {logoutAction} from '../../store/api-actions';
 import Logo from '../logo/logo';
-import {AuthorizationStatus, AppRoute} from '../../const';
+import {AuthorizationStatus, AppRoute, NameSpace} from '../../const';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
 
 function Header(): JSX.Element {
-  const authorizationStatus = useAppSelector((state) => state.authorizationStatus);
-  const userData = useAppSelector((state) => state.userData);
-  const favoritesOffersCount = useAppSelector((state) => state.offers).filter(({isFavorite}) => isFavorite).length;
+  const authorizationStatus = useAppSelector((state) => state[NameSpace.User].authorizationStatus);
+  const userData = useAppSelector((state) => state[NameSpace.User].userData);
+  const favoritesOffersCount = useAppSelector((state) => state[NameSpace.Data].offers).filter(({isFavorite}) => isFavorite).length;
 
   const dispatch = useAppDispatch();
 
