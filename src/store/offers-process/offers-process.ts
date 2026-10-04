@@ -1,8 +1,9 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace, CITIES} from '../../const';
-import {Offer} from '../../types/offers';
+import {OffersProcess} from '../../types/store';
+import {CityName} from '../../types/offers';
 
-const initialState = {
+const initialState: OffersProcess = {
   city: CITIES[0].name,
 };
 
@@ -11,7 +12,7 @@ export const offersProcess = createSlice({
   initialState,
   reducers: {
     setCity: (state, action) => {
-      state.city = action.payload;
+      state.city = action.payload as CityName;
     },
   },
 });

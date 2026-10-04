@@ -1,8 +1,9 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {NameSpace} from '../../const';
+import {OffersData} from '../../types/store';
 import {fetchOffersAction} from '../api-actions';
 
-const initialState = {
+const initialState: OffersData = {
   offers: [],
   isOffersDataLoading: false,
 };
