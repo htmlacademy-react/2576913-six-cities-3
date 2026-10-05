@@ -1,19 +1,22 @@
 import {Helmet} from 'react-helmet-async';
-import {useRef, FormEvent} from 'react';
-import {Navigate} from 'react-router-dom';
+import {useRef, FormEvent, SyntheticEvent} from 'react';
+import {Navigate, useNavigate} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from '../../hooks/store';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {setCity} from '../../store/offers-process/offers-process';
 import {loginAction} from '../../store/api-actions';
 import Logo from '../../components/logo/logo';
-import {AuthorizationStatus, AppRoute} from '../../const';
+import {AuthorizationStatus, AppRoute, CITIES} from '../../const';
 
 function LoginPage(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
+  const randomCity = CITIES[Math.floor(Math.random() * CITIES.length)].name;
 
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
@@ -24,6 +27,12 @@ function LoginPage(): JSX.Element {
         password: passwordRef.current.value,
       }));
     }
+  };
+
+  const handleRandomCityClick = (evt: SyntheticEvent<HTMLAnchorElement>) => {
+    evt.preventDefault();
+    dispatch(setCity(randomCity));
+    navigate(AppRoute.Main);
   };
 
   return !(authorizationStatus === AuthorizationStatus.Auth) ? (
@@ -60,8 +69,8 @@ function LoginPage(): JSX.Element {
           </section>
           <section className="locations locations--login locations--current">
             <div className="locations__item">
-              <a className="locations__item-link" href="#">
-                <span>Amsterdam</span>
+              <a className="locations__item-link" href="#" onClick={handleRandomCityClick}>
+                <span>{randomCity}</span>
               </a>
             </div>
           </section>
