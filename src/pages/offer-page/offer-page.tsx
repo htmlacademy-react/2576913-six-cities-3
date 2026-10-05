@@ -92,7 +92,7 @@ function OfferPage(): JSX.Element {
       });
 
     api.get<Reviews>(`${APIRoute.Comments}/${id}`)
-      .then(({data}) => setReviews(data.slice(0, 10)))
+      .then(({data}) => setReviews(data.slice(0, 10).reverse()))
       .catch(() => toast.error('Failed to load comments!'));
 
     api.get<Offers>(`${APIRoute.Offers}/${id}/nearby`)
@@ -117,7 +117,7 @@ function OfferPage(): JSX.Element {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {foundOfferInfo.images.map((image) => (
+              {foundOfferInfo.images.slice(0, 6).map((image) => (
                 <div className="offer__image-wrapper" key={image}>
                   <img className="offer__image" src={image} alt="Photo studio" />
                 </div>
