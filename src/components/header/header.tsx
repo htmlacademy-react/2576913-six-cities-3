@@ -1,15 +1,14 @@
 import {Link} from 'react-router-dom';
 import {logoutAction} from '../../store/api-actions';
 import Logo from '../logo/logo';
-import {AuthorizationStatus, AppRoute, NameSpace} from '../../const';
+import {AuthorizationStatus, AppRoute} from '../../const';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
-import {getOffers} from '../../store/offers-data/selectors';
-import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {getAuthorizationStatus, getFavoritesOffers, getUserData} from '../../store/user-process/selectors';
 
 function Header(): JSX.Element {
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
-  const userData = useAppSelector((state) => state[NameSpace.User].userData);
-  const favoritesOffersCount = useAppSelector(getOffers).filter(({isFavorite}) => isFavorite).length;
+  const userData = useAppSelector(getUserData);
+  const favoritesOffersCount = useAppSelector(getFavoritesOffers).length;
 
   const dispatch = useAppDispatch();
 

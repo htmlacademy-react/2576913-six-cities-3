@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {toast} from 'react-toastify';
 import {NameSpace} from '../../const';
 import {OffersData} from '../../types/store';
@@ -12,7 +12,12 @@ const initialState: OffersData = {
 export const offersData = createSlice({
   name: NameSpace.Offers,
   initialState,
-  reducers: {},
+  reducers: {
+    replaceOffer: (state, action: PayloadAction<OffersData['offers'][number]>) => {
+      const foundIndex = state.offers.findIndex(({id}) => id === action.payload.id);
+      state.offers[foundIndex] = action.payload;
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(fetchOffersAction.pending, (state) => {
@@ -28,3 +33,5 @@ export const offersData = createSlice({
       });
   },
 });
+
+export const {replaceOffer} = offersData.actions;

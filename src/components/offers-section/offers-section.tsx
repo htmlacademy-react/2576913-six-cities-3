@@ -1,10 +1,16 @@
 import {useState, useEffect} from 'react';
-import {Offers, Offer, City} from '../../types/offers';
+import {useNavigate} from 'react-router-dom';
+import {Offers, Offer, City, OfferInfo} from '../../types/offers';
 import Sorting from '../sorting/sorting';
 import OfferCard from '../offer-card/offer-card';
 import Map from '../map/map';
-import { Nullable } from 'vitest';
-import {SortingType} from '../../const';
+import {Nullable} from 'vitest';
+import {SortingType, AuthorizationStatus, APIRoute, AppRoute} from '../../const';
+import {useAppSelector, useAppDispatch} from '../../hooks/store';
+import {getAuthorizationStatus} from '../../store/user-process/selectors';
+import {createAPI} from '../../services/api';
+import {setFavoriteOffer} from '../../store/user-process/user-process';
+import {replaceOffer} from '../../store/offers-data/offers-data';
 
 type OffersListProps = {
   offers: Offers;
@@ -17,6 +23,11 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
     currentType: SortingType.Default,
     offers: offers,
   });
+
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
+
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const isEmpty = offers.length === 0;
   const sourcedOffers = structuredClone(offers);
@@ -54,6 +65,28 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
     }
   };
 
+  const handleFavoriteClick = async (offerId: string, status: boolean): Promise<boolean> => {
+    if (!(authorizationStatus === AuthorizationStatus.Auth)) {
+      navigate(AppRoute.Login);
+      return false;
+    }
+
+    const api = createAPI();
+    try {
+      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
+      let foundOffer = offers.find(({id}) => data.id === id) as Offer;
+      foundOffer = {
+        ...structuredClone(foundOffer),
+        isFavorite: !(foundOffer?.isFavorite),
+      };
+      dispatch(setFavoriteOffer({offer: foundOffer, status}));
+      dispatch(replaceOffer(foundOffer));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     setSorting({
       currentType: SortingType.Default,
@@ -70,7 +103,14 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
           <Sorting currentType={sorting.currentType} onChange={handleSortingTypeChange} />
           <div className="cities__places-list places__list tabs__content">
             {
-              sorting.offers.map((offer) => <OfferCard key={offer.id} offer={offer} onHover={handleOfferHover} offerType='city' />)
+              sorting.offers.map((offer) => (
+                <OfferCard
+                  key={offer.id} offer={offer}
+                  onHover={handleOfferHover}
+                  onFavoriteClick={handleFavoriteClick}
+                  offerType='city'
+                />
+              ))
             }
           </div>
         </section>

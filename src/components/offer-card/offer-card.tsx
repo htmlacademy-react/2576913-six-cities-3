@@ -5,10 +5,11 @@ import {Link} from 'react-router-dom';
 type OfferCardProps = {
   offer: Offer;
   onHover: (offer?: Offer) => void;
+  onFavoriteClick: (offerId: string, status: boolean) => Promise<boolean>;
   offerType: 'city' | 'nearest' | 'favorite';
 };
 
-function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
+function OfferCard({offer, onHover, onFavoriteClick, offerType}: OfferCardProps): JSX.Element {
   const { id, isPremium, isFavorite, previewImage, price, rating, title, type } = offer;
 
   const handleMouseEnter = () => {
@@ -17,6 +18,10 @@ function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
 
   const handleMouseLeave = () => {
     onHover();
+  };
+
+  const handleFavoriteClick = async () => {
+    await onFavoriteClick(id, !isFavorite);
   };
 
   return (
@@ -48,7 +53,13 @@ function OfferCard({offer, onHover, offerType}: OfferCardProps): JSX.Element {
             <b className="place-card__price-value">&euro;{price}</b>
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
-          <button className={`place-card__bookmark-button ${isFavorite && 'place-card__bookmark-button--active'} button`} type="button">
+          <button
+            className={`place-card__bookmark-button ${isFavorite && 'place-card__bookmark-button--active'} button`}
+            type="button"
+            onClick={() => {
+              handleFavoriteClick();
+            }}
+          >
             <svg className="place-card__bookmark-icon" width="18" height="19">
               <use xlinkHref="#icon-bookmark"></use>
             </svg>

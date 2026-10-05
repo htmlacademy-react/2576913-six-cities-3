@@ -3,37 +3,35 @@ import Header from '../../components/header/header';
 import OfferCard from '../../components/offer-card/offer-card';
 import Footer from '../../components/footer/footer';
 import {Offers, CityName} from '../../types/offers';
-
-type FavoritesPageProps = {
-  offers: Offers;
-};
+import {useAppSelector} from '../../hooks/store';
+import {getFavoritesOffers} from '../../store/user-process/selectors';
 
 type FavoritesOffers = {
   city: CityName;
   offers: Offers;
 }[];
 
-function getFavoritesOffersGroups(offers: Offers): FavoritesOffers {
-  const filteredOffers = offers.filter(({isFavorite}) => isFavorite);
+function FavoritesPage(): JSX.Element {
+  const favoritesOffers = useAppSelector(getFavoritesOffers);
 
-  return filteredOffers.reduce<FavoritesOffers>((groups, offer) => {
-    const city = offer.city.name;
-    const cityGroup = groups.find((group) => group.city === city);
+  function getFavoritesOffersGroups(offers: Offers): FavoritesOffers {
+    return offers.reduce<FavoritesOffers>((groups, offer) => {
+      const city = offer.city.name;
+      const cityGroup = groups.find((group) => group.city === city);
 
-    if (cityGroup) {
-      cityGroup.offers.push(offer);
-    } else {
-      groups.push({city, offers: [offer]});
-    }
+      if (cityGroup) {
+        cityGroup.offers.push(offer);
+      } else {
+        groups.push({city, offers: [offer]});
+      }
 
-    return groups;
-  }, []);
-}
+      return groups;
+    }, []);
+  }
 
-function FavoritesPage({offers}: FavoritesPageProps): JSX.Element {
-  const favoritesOffersGroups = getFavoritesOffersGroups(offers);
+  const favoritesOffersGroups = getFavoritesOffersGroups(favoritesOffers);
 
-  const isEmpty = offers.length === 0;
+  const isEmpty = favoritesOffersGroups.length === 0;
 
   return (
     <div className="page">

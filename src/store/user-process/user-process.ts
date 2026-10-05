@@ -1,7 +1,8 @@
-import {createSlice} from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {toast} from 'react-toastify';
 import {AuthorizationStatus, NameSpace} from '../../const';
 import {UserProcess} from '../../types/store';
+import {Offer} from '../../types/offers';
 import {checkAuthAction, loginAction, logoutAction, fetchFavoritesOffers} from '../api-actions';
 
 const initialState: UserProcess = {
@@ -13,7 +14,15 @@ const initialState: UserProcess = {
 export const userProcess = createSlice({
   name: NameSpace.User,
   initialState,
-  reducers: {},
+  reducers: {
+    setFavoriteOffer: (state, action: PayloadAction<{offer: Offer; status: boolean}>) => {
+      if (action.payload.status) {
+        state.favoritesOffers.push(action.payload.offer);
+      } else {
+        state.favoritesOffers = state.favoritesOffers.filter(({id}) => id !== action.payload.offer.id);
+      }
+    },
+  },
   extraReducers(builder) {
     builder
       .addCase(checkAuthAction.fulfilled, (state, action) => {
@@ -44,3 +53,5 @@ export const userProcess = createSlice({
       });
   }
 });
+
+export const {setFavoriteOffer} = userProcess.actions;
