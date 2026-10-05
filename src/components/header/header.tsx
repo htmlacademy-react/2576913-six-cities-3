@@ -1,3 +1,4 @@
+import {SyntheticEvent} from 'react';
 import {Link} from 'react-router-dom';
 import {logoutAction} from '../../store/api-actions';
 import Logo from '../logo/logo';
@@ -12,7 +13,8 @@ function Header(): JSX.Element {
 
   const dispatch = useAppDispatch();
 
-  const handleLogout = () => {
+  const handleLogout = (evt: SyntheticEvent<HTMLAnchorElement>) => {
+    evt.preventDefault();
     dispatch(logoutAction());
   };
 
