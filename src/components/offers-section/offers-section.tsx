@@ -11,6 +11,7 @@ import {getAuthorizationStatus} from '../../store/user-process/selectors';
 import {createAPI} from '../../services/api';
 import {setFavoriteOffer} from '../../store/user-process/user-process';
 import {replaceOffer} from '../../store/offers-data/offers-data';
+import {toast} from 'react-toastify';
 
 type OffersListProps = {
   offers: Offers;
@@ -83,6 +84,8 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
       dispatch(replaceOffer(foundOffer));
       return true;
     } catch {
+      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
+      toast.error(message);
       return false;
     }
   };

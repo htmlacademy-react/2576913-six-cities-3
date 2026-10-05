@@ -10,6 +10,7 @@ import {replaceOffer} from '../../store/offers-data/offers-data';
 import {getOffers} from '../../store/offers-data/selectors';
 import {createAPI} from '../../services/api';
 import {APIRoute} from '../../const';
+import {toast} from 'react-toastify';
 
 type FavoritesOffers = {
   city: CityName;
@@ -54,6 +55,8 @@ function FavoritesPage(): JSX.Element {
       dispatch(replaceOffer(foundOffer));
       return true;
     } catch {
+      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
+      toast.error(message);
       return false;
     }
   };

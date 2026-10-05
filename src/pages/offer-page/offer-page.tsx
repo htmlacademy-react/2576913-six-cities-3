@@ -75,6 +75,8 @@ function OfferPage(): JSX.Element {
       dispatch(replaceOffer(foundOffer));
       return true;
     } catch {
+      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
+      toast.error(message);
       return false;
     }
   };
