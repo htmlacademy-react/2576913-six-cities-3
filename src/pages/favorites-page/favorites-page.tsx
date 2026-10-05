@@ -2,9 +2,14 @@ import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import OfferCard from '../../components/offer-card/offer-card';
 import Footer from '../../components/footer/footer';
-import {Offers, CityName} from '../../types/offers';
-import {useAppSelector} from '../../hooks/store';
+import {Offers, Offer, CityName, OfferInfo} from '../../types/offers';
+import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getFavoritesOffers} from '../../store/user-process/selectors';
+import {setFavoriteOffer} from '../../store/user-process/user-process';
+import {replaceOffer} from '../../store/offers-data/offers-data';
+import {getOffers} from '../../store/offers-data/selectors';
+import {createAPI} from '../../services/api';
+import {APIRoute} from '../../const';
 
 type FavoritesOffers = {
   city: CityName;
@@ -13,9 +18,12 @@ type FavoritesOffers = {
 
 function FavoritesPage(): JSX.Element {
   const favoritesOffers = useAppSelector(getFavoritesOffers);
+  const offers = useAppSelector(getOffers);
 
-  function getFavoritesOffersGroups(offers: Offers): FavoritesOffers {
-    return offers.reduce<FavoritesOffers>((groups, offer) => {
+  const dispatch = useAppDispatch();
+
+  function getFavoritesOffersGroups(favoriteOffers: Offers): FavoritesOffers {
+    return favoriteOffers.reduce<FavoritesOffers>((groups, offer) => {
       const city = offer.city.name;
       const cityGroup = groups.find((group) => group.city === city);
 
@@ -32,6 +40,23 @@ function FavoritesPage(): JSX.Element {
   const favoritesOffersGroups = getFavoritesOffersGroups(favoritesOffers);
 
   const isEmpty = favoritesOffersGroups.length === 0;
+
+  const handleFavoriteClick = async (offerId: string, status: boolean): Promise<boolean> => {
+    const api = createAPI();
+    try {
+      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
+      let foundOffer = offers.find(({id}) => data.id === id) as Offer;
+      foundOffer = {
+        ...structuredClone(foundOffer),
+        isFavorite: !(foundOffer?.isFavorite),
+      };
+      dispatch(setFavoriteOffer({offer: foundOffer, status}));
+      dispatch(replaceOffer(foundOffer));
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
   return (
     <div className="page">
@@ -57,7 +82,15 @@ function FavoritesPage(): JSX.Element {
                     </div>
                   </div>
                   <div className="favorites__places">
-                    {group.offers.map((offer) => <OfferCard key={offer.id} offer={offer} offerType='favorite' onHover={() => null} />)}
+                    {group.offers.map((offer) => (
+                      <OfferCard
+                        key={offer.id}
+                        offer={offer}
+                        offerType='favorite'
+                        onHover={() => null}
+                        onFavoriteClick={handleFavoriteClick}
+                      />
+                    ))}
                   </div>
                 </li>
               ))}
