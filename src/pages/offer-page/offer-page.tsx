@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom';
+import {useParams, useNavigate} from 'react-router-dom';
 import {Helmet} from 'react-helmet-async';
 import {toast} from 'react-toastify';
 import Header from '../../components/header/header';
@@ -13,26 +13,31 @@ import Loader from '../../components/loader/loader';
 import ScrollToTop from '../../components/scroll-to-top/scroll-to-top';
 import {City, Offers, OfferInfo, Offer} from '../../types/offers';
 import {Reviews, Review} from '../../types/reviews';
-import {useAppSelector} from '../../hooks/store';
+import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getCurrentCity} from '../../store/offers-process/selectors';
 import {getOffers} from '../../store/offers-data/selectors';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
-import {CITIES, APIRoute, AuthorizationStatus} from '../../const';
+import {setFavoriteOffer} from '../../store/user-process/user-process';
+import {replaceOffer} from '../../store/offers-data/offers-data';
+import {CITIES, APIRoute, AuthorizationStatus, AppRoute} from '../../const';
 import {Nullable} from 'vitest';
 import {createAPI} from '../../services/api';
 
 function OfferPage(): JSX.Element {
   const [isNeedScroll, setIsNeedScroll] = useState(false);
   const [isFound, setIsFound] = useState(true);
-  const [foundOffer, setFoundOffer] = useState<Nullable<OfferInfo>>(null);
+  const [foundOfferInfo, setFoundOfferInfo] = useState<Nullable<OfferInfo>>(null);
   const [reviews, setReviews] = useState<Nullable<Reviews>>(null);
   const [nearestOffers, setNearestOffers] = useState<Nullable<Offers>>(null);
 
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const currentCity = useAppSelector(getCurrentCity);
   const currentCityData = CITIES.find((city) => city.name === currentCity);
-  const currentOffer = useAppSelector(getOffers).find((offer) => offer.id === id);
+  const offers = useAppSelector(getOffers);
+  const currentOffer = offers.find((offer) => offer.id === id);
   const offersForMap = nearestOffers?.slice(0, 3);
   offersForMap?.push(currentOffer as Offer);
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
@@ -51,12 +56,35 @@ function OfferPage(): JSX.Element {
     }
   };
 
+  const handleFavoriteClick = async (offerId: string, status: boolean): Promise<boolean> => {
+    if (!(authorizationStatus === AuthorizationStatus.Auth)) {
+      navigate(AppRoute.Login);
+      return false;
+    }
+
+    setIsNeedScroll(false);
+    const api = createAPI();
+    try {
+      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
+      let foundOffer = offers.find((offer) => data.id === offer.id) as Offer;
+      foundOffer = {
+        ...structuredClone(foundOffer),
+        isFavorite: !(foundOffer?.isFavorite),
+      };
+      dispatch(setFavoriteOffer({offer: foundOffer, status}));
+      dispatch(replaceOffer(foundOffer));
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     const api = createAPI();
     setIsNeedScroll(true);
 
     api.get<OfferInfo>(`${APIRoute.Offers}/${id}`)
-      .then(({data}) => setFoundOffer(data))
+      .then(({data}) => setFoundOfferInfo(data))
       .catch(() => {
         setIsFound(false);
       });
@@ -74,7 +102,7 @@ function OfferPage(): JSX.Element {
     return <NotFoundPage type='offer' />;
   }
 
-  return foundOffer && reviews && nearestOffers ? (
+  return foundOfferInfo && reviews && nearestOffers ? (
     <div className="page">
       <Helmet>
         <title>Offer</title>
@@ -87,7 +115,7 @@ function OfferPage(): JSX.Element {
         <section className="offer">
           <div className="offer__gallery-container container">
             <div className="offer__gallery">
-              {foundOffer.images.map((image) => (
+              {foundOfferInfo.images.map((image) => (
                 <div className="offer__image-wrapper" key={image}>
                   <img className="offer__image" src={image} alt="Photo studio" />
                 </div>
@@ -96,7 +124,7 @@ function OfferPage(): JSX.Element {
           </div>
           <div className="offer__container container">
             <div className="offer__wrapper">
-              <OfferDescription offer={foundOffer} />
+              <OfferDescription offer={foundOfferInfo} onFavoriteClick={handleFavoriteClick} />
               <section className="offer__reviews reviews">
                 <h2 className="reviews__title">Reviews &middot; <span className="reviews__amount">{reviews.length}</span></h2>
                 <ReviewsList reviews={reviews} />
@@ -112,7 +140,13 @@ function OfferPage(): JSX.Element {
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <div className="near-places__list places__list">
               {nearestOffers.map((nearestOffer) => (
-                <OfferCard key={nearestOffer.id} offer={nearestOffer} onHover={() => null} offerType='nearest' />
+                <OfferCard
+                  key={nearestOffer.id}
+                  offer={nearestOffer}
+                  onHover={() => null}
+                  onFavoriteClick={handleFavoriteClick}
+                  offerType='nearest'
+                />
               ))}
             </div>
           </section>

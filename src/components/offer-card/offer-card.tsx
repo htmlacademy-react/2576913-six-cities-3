@@ -1,3 +1,4 @@
+import {useState} from 'react';
 import cn from 'classnames';
 import {Offer} from '../../types/offers';
 import {Link} from 'react-router-dom';
@@ -11,6 +12,7 @@ type OfferCardProps = {
 
 function OfferCard({offer, onHover, onFavoriteClick, offerType}: OfferCardProps): JSX.Element {
   const { id, isPremium, isFavorite, previewImage, price, rating, title, type } = offer;
+  const [favorite, setFavorite] = useState(isFavorite);
 
   const handleMouseEnter = () => {
     onHover(offer);
@@ -21,7 +23,11 @@ function OfferCard({offer, onHover, onFavoriteClick, offerType}: OfferCardProps)
   };
 
   const handleFavoriteClick = async () => {
-    await onFavoriteClick(id, !isFavorite);
+    const isSuccess = await onFavoriteClick(id, !favorite);
+
+    if (isSuccess) {
+      setFavorite(!favorite);
+    }
   };
 
   return (
@@ -54,7 +60,7 @@ function OfferCard({offer, onHover, onFavoriteClick, offerType}: OfferCardProps)
             <span className="place-card__price-text">&#47;&nbsp;night</span>
           </div>
           <button
-            className={`place-card__bookmark-button ${isFavorite && 'place-card__bookmark-button--active'} button`}
+            className={`place-card__bookmark-button ${favorite && 'place-card__bookmark-button--active'} button`}
             type="button"
             onClick={() => {
               handleFavoriteClick();
