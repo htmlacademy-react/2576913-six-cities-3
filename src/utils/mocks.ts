@@ -1,26 +1,26 @@
-import { system } from 'faker';
+import { system, datatype, random } from 'faker';
 import { Offer } from '../types/offers';
 
 export const makeFakeOffer = (): Offer => ({
-  id: '31c26c6c-076b-4159-a0c3-170d9585a5d5',
-  title: 'Waterfront with extraordinary view',
+  id: 'id-code',
+  title: random.words(),
   type: 'house',
-  price: 824,
+  price: datatype.number(1000),
   previewImage: system.filePath(),
   city: {
     name: 'Paris',
     location: {
-      latitude: 48.85661,
-      longitude: 2.351499,
-      zoom: 13,
+      latitude: datatype.float(),
+      longitude: datatype.float(),
+      zoom: datatype.number(20),
     }
   },
   location: {
-    latitude: 48.85661,
-    longitude: 2.342499,
-    zoom: 16,
+    latitude: datatype.float(),
+    longitude: datatype.float(),
+    zoom: datatype.number(20),
   },
   isFavorite: false,
   isPremium: true,
-  rating: 4,
+  rating: 5,
 });
