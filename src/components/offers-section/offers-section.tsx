@@ -1,17 +1,14 @@
 import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Offers, Offer, City, OfferInfo} from '../../types/offers';
+import {Offers, Offer, City} from '../../types/offers';
 import Sorting from '../sorting/sorting';
 import OfferCard from '../offer-card/offer-card';
 import Map from '../map/map';
 import {Nullable} from 'vitest';
-import {SortingType, AuthorizationStatus, APIRoute, AppRoute} from '../../const';
+import {SortingType, AuthorizationStatus, AppRoute} from '../../const';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
-import {createAPI} from '../../services/api';
-import {setFavoriteOffer} from '../../store/user-process/user-process';
-import {replaceOffer} from '../../store/offers-data/offers-data';
-import {toast} from 'react-toastify';
+import {toggleFavoriteAction} from '../../store/api-actions';
 
 type OffersListProps = {
   offers: Offers;
@@ -72,20 +69,10 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
       return false;
     }
 
-    const api = createAPI();
     try {
-      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
-      let foundOffer = offers.find(({id}) => data.id === id) as Offer;
-      foundOffer = {
-        ...structuredClone(foundOffer),
-        isFavorite: !(foundOffer?.isFavorite),
-      };
-      dispatch(setFavoriteOffer({offer: foundOffer, status}));
-      dispatch(replaceOffer(foundOffer));
+      await dispatch(toggleFavoriteAction({offerId, status})).unwrap();
       return true;
     } catch {
-      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
-      toast.error(message);
       return false;
     }
   };

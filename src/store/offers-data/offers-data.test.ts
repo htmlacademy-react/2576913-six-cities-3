@@ -1,5 +1,6 @@
 import { replaceOffer, offersData } from './offers-data';
 import { makeFakeOffer } from '../../utils/mocks';
+import { toggleFavoriteAction } from '../api-actions';
 
 describe('OffersData Slice', () => {
   it('should return initial state with empty action', () => {
@@ -39,5 +40,22 @@ describe('OffersData Slice', () => {
     const result = offersData.reducer(initialState, replaceOffer(secondMockOffer));
 
     expect(result.offers).toEqual(expectedOffers);
+  });
+
+  it('should update offers when "toggleFavoriteAction" is fulfilled', () => {
+    const mockOffer = makeFakeOffer();
+    const updatedOffer = {...mockOffer, isFavorite: true};
+    const initialState = {
+      offers: [mockOffer],
+      isOffersDataLoading: false,
+    };
+
+    const result = offersData.reducer(initialState, toggleFavoriteAction.fulfilled(
+      {offer: updatedOffer, status: true},
+      'request-id',
+      {offerId: mockOffer.id, status: true},
+    ));
+
+    expect(result.offers).toEqual([updatedOffer]);
   });
 });

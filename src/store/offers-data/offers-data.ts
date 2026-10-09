@@ -2,7 +2,7 @@ import {createSlice, type PayloadAction} from '@reduxjs/toolkit';
 import {toast} from 'react-toastify';
 import {NameSpace} from '../../const';
 import {OffersData} from '../../types/store';
-import {fetchOffersAction} from '../api-actions';
+import {fetchOffersAction, toggleFavoriteAction} from '../api-actions';
 
 const initialState: OffersData = {
   offers: [],
@@ -30,6 +30,12 @@ export const offersData = createSlice({
       .addCase(fetchOffersAction.rejected, (state) => {
         state.isOffersDataLoading = false;
         toast.error('Failed to load offers!');
+      })
+      .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
+        const foundIndex = state.offers.findIndex(({id}) => id === action.payload.offer.id);
+        if (foundIndex !== -1) {
+          state.offers[foundIndex] = action.payload.offer;
+        }
       });
   },
 });

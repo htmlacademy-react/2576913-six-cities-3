@@ -3,7 +3,7 @@ import {toast} from 'react-toastify';
 import {AuthorizationStatus, NameSpace} from '../../const';
 import {UserProcess} from '../../types/store';
 import {Offer} from '../../types/offers';
-import {checkAuthAction, loginAction, logoutAction, fetchFavoritesOffers} from '../api-actions';
+import {checkAuthAction, loginAction, logoutAction, fetchFavoritesOffers, toggleFavoriteAction} from '../api-actions';
 
 const initialState: UserProcess = {
   authorizationStatus: AuthorizationStatus.Unknown,
@@ -50,6 +50,13 @@ export const userProcess = createSlice({
       })
       .addCase(fetchFavoritesOffers.rejected, () => {
         toast.warn('You are not logged! Failed to load favorites offers!');
+      })
+      .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
+        if (action.payload.status) {
+          state.favoritesOffers.push(action.payload.offer);
+        } else {
+          state.favoritesOffers = state.favoritesOffers.filter(({id}) => id !== action.payload.offer.id);
+        }
       });
   }
 });

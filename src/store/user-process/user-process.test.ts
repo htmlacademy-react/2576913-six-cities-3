@@ -1,6 +1,7 @@
 import { setFavoriteOffer, userProcess } from './user-process';
 import { makeFakeOffer } from '../../utils/mocks';
 import { AuthorizationStatus } from '../../const';
+import { toggleFavoriteAction } from '../api-actions';
 
 describe('UserProcess Slice', () => {
   it('should return initial state with empty action', () => {
@@ -60,5 +61,22 @@ describe('UserProcess Slice', () => {
     }));
 
     expect(result.favoritesOffers).toEqual([]);
+  });
+
+  it('should update favorites when "toggleFavoriteAction" is fulfilled', () => {
+    const mockOffer = makeFakeOffer();
+    const initialState = {
+      authorizationStatus: AuthorizationStatus.Auth,
+      userData: null,
+      favoritesOffers: [],
+    };
+
+    const result = userProcess.reducer(initialState, toggleFavoriteAction.fulfilled(
+      {offer: mockOffer, status: true},
+      'request-id',
+      {offerId: mockOffer.id, status: true},
+    ));
+
+    expect(result.favoritesOffers).toEqual([mockOffer]);
   });
 });

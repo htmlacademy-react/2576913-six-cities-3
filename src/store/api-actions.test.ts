@@ -5,9 +5,9 @@ import { configureMockStore } from '@jedmao/redux-mock-store';
 import { Action } from 'redux';
 import { createAPI } from '../services/api';
 import { RootState } from '../types/store';
-import { AppThunkDispatch, extractActionsTypes, makeFakeOffer } from '../utils/mocks';
+import { AppThunkDispatch, extractActionsTypes, makeFakeOffer, makeFakeOfferInfo } from '../utils/mocks';
 import { APIRoute } from '../const';
-import { checkAuthAction, fetchFavoritesOffers, fetchOffersAction, loginAction, logoutAction } from './api-actions';
+import { checkAuthAction, fetchFavoritesOffers, fetchOffersAction, loginAction, logoutAction, toggleFavoriteAction } from './api-actions';
 import { AuthData } from '../types/auth-data';
 import * as tokenStorage from '../services/token';
 
@@ -113,6 +113,47 @@ describe('Async actions', () => {
       expect(actions).toEqual([
         fetchFavoritesOffers.pending.type,
         fetchFavoritesOffers.rejected.type,
+      ]);
+    });
+  });
+
+  describe('toggleFavoriteAction', () => {
+    it('should update the offer when the server responds 200', async() => {
+      const offer = makeFakeOffer();
+      const favoriteOffer = makeFakeOfferInfo();
+      mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offer.id}/1`).reply(200, favoriteOffer);
+      store = mockStoreCreator({
+        DATA: { offers: [offer] },
+        USER: { favoritesOffers: [] },
+      });
+
+      await store.dispatch(toggleFavoriteAction({offerId: offer.id, status: true}));
+
+      const actions = store.getActions();
+      const fulfilledAction = actions.at(-1) as ReturnType<typeof toggleFavoriteAction.fulfilled>;
+      expect(extractActionsTypes(actions)).toEqual([
+        toggleFavoriteAction.pending.type,
+        toggleFavoriteAction.fulfilled.type,
+      ]);
+      expect(fulfilledAction.payload).toEqual({
+        offer: {...offer, isFavorite: true},
+        status: true,
+      });
+    });
+
+    it('should dispatch rejected when the server responds 400', async() => {
+      const offer = makeFakeOffer();
+      mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offer.id}/1`).reply(400);
+      store = mockStoreCreator({
+        DATA: { offers: [offer] },
+        USER: { favoritesOffers: [] },
+      });
+
+      await store.dispatch(toggleFavoriteAction({offerId: offer.id, status: true}));
+
+      expect(extractActionsTypes(store.getActions())).toEqual([
+        toggleFavoriteAction.pending.type,
+        toggleFavoriteAction.rejected.type,
       ]);
     });
   });

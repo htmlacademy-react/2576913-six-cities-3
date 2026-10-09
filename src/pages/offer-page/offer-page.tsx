@@ -17,11 +17,10 @@ import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getCurrentCity} from '../../store/offers-process/selectors';
 import {getOffers} from '../../store/offers-data/selectors';
 import {getAuthorizationStatus} from '../../store/user-process/selectors';
-import {setFavoriteOffer} from '../../store/user-process/user-process';
-import {replaceOffer} from '../../store/offers-data/offers-data';
 import {CITIES, APIRoute, AuthorizationStatus, AppRoute} from '../../const';
 import {Nullable} from 'vitest';
 import {createAPI} from '../../services/api';
+import {toggleFavoriteAction} from '../../store/api-actions';
 
 function OfferPage(): JSX.Element {
   const [isNeedScroll, setIsNeedScroll] = useState(false);
@@ -63,20 +62,10 @@ function OfferPage(): JSX.Element {
     }
 
     setIsNeedScroll(false);
-    const api = createAPI();
     try {
-      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
-      let foundOffer = offers.find((offer) => data.id === offer.id) as Offer;
-      foundOffer = {
-        ...structuredClone(foundOffer),
-        isFavorite: !(foundOffer?.isFavorite),
-      };
-      dispatch(setFavoriteOffer({offer: foundOffer, status}));
-      dispatch(replaceOffer(foundOffer));
+      await dispatch(toggleFavoriteAction({offerId, status})).unwrap();
       return true;
     } catch {
-      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
-      toast.error(message);
       return false;
     }
   };

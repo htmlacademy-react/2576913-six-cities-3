@@ -2,11 +2,16 @@ import {AxiosInstance} from 'axios';
 import {createAsyncThunk} from '@reduxjs/toolkit';
 import {toast} from 'react-toastify';
 import {AppDispatch, RootState} from '../types/store';
-import {Offers} from '../types/offers';
+import {Offer, OfferInfo, Offers} from '../types/offers';
 import {AuthData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
 import {saveToken, dropToken} from '../services/token';
 import {APIRoute} from '../const';
+
+type FavoriteOfferPayload = {
+  offer: Offer;
+  status: boolean;
+};
 
 export const fetchOffersAction = createAsyncThunk<Offers, undefined, {
   dispatch: AppDispatch;
@@ -70,5 +75,39 @@ export const fetchFavoritesOffers = createAsyncThunk<Offers, undefined, {
   async (_arg, {extra: api}) => {
     const {data} = await api.get<Offers>(APIRoute.Favorite);
     return data;
+  },
+);
+
+export const toggleFavoriteAction = createAsyncThunk<FavoriteOfferPayload, {
+  offerId: string;
+  status: boolean;
+}, {
+  dispatch: AppDispatch;
+  state: RootState;
+  extra: AxiosInstance;
+  rejectValue: string;
+}>(
+  'user/toggleFavorite',
+  async ({offerId, status}, {extra: api, getState, rejectWithValue}) => {
+    try {
+      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
+      const offer = getState().DATA.offers.find(({id}) => id === data.id);
+
+      if (!offer) {
+        throw new Error(`Offer ${data.id} was not found in the offers list.`);
+      }
+
+      return {
+        offer: {
+          ...structuredClone(offer),
+          isFavorite: !offer.isFavorite,
+        },
+        status,
+      };
+    } catch {
+      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
+      toast.error(message);
+      return rejectWithValue(message);
+    }
   },
 );

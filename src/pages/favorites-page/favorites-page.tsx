@@ -2,15 +2,10 @@ import {Helmet} from 'react-helmet-async';
 import Header from '../../components/header/header';
 import OfferCard from '../../components/offer-card/offer-card';
 import Footer from '../../components/footer/footer';
-import {Offers, Offer, CityName, OfferInfo} from '../../types/offers';
+import {Offers, CityName} from '../../types/offers';
 import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getFavoritesOffers} from '../../store/user-process/selectors';
-import {setFavoriteOffer} from '../../store/user-process/user-process';
-import {replaceOffer} from '../../store/offers-data/offers-data';
-import {getOffers} from '../../store/offers-data/selectors';
-import {createAPI} from '../../services/api';
-import {APIRoute} from '../../const';
-import {toast} from 'react-toastify';
+import {toggleFavoriteAction} from '../../store/api-actions';
 
 type FavoritesOffers = {
   city: CityName;
@@ -19,7 +14,6 @@ type FavoritesOffers = {
 
 function FavoritesPage(): JSX.Element {
   const favoritesOffers = useAppSelector(getFavoritesOffers);
-  const offers = useAppSelector(getOffers);
 
   const dispatch = useAppDispatch();
 
@@ -43,20 +37,10 @@ function FavoritesPage(): JSX.Element {
   const isEmpty = favoritesOffersGroups.length === 0;
 
   const handleFavoriteClick = async (offerId: string, status: boolean): Promise<boolean> => {
-    const api = createAPI();
     try {
-      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
-      let foundOffer = offers.find(({id}) => data.id === id) as Offer;
-      foundOffer = {
-        ...structuredClone(foundOffer),
-        isFavorite: !(foundOffer?.isFavorite),
-      };
-      dispatch(setFavoriteOffer({offer: foundOffer, status}));
-      dispatch(replaceOffer(foundOffer));
+      await dispatch(toggleFavoriteAction({offerId, status})).unwrap();
       return true;
     } catch {
-      const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
-      toast.error(message);
       return false;
     }
   };
