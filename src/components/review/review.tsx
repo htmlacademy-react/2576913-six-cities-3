@@ -38,7 +38,7 @@ function ReviewItem({review}: ReviewItemProps): JSX.Element {
   const reviewMonth = getMonth(reviewDate.getMonth() + 1);
 
   return (
-    <li className="reviews__item">
+    <li className="reviews__item" data-testid="reviewItem">
       <div className="reviews__user user">
         <div className="reviews__avatar-wrapper user__avatar-wrapper">
           <img className="reviews__avatar user__avatar" src={review.user.avatarUrl} width="54" height="54" alt="Reviews avatar" />

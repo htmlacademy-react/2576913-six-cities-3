@@ -49,6 +49,7 @@ function Sorting({currentType, onChange}: SortingProps): JSX.Element {
             className={`places__option ${currentType === type && 'places__option--active'}`}
             tabIndex={0}
             onClick={() => hangleSortingTypeChange(type)}
+            data-testid="option"
           >
             {label}
           </li>
