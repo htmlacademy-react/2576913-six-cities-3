@@ -1,0 +1,68 @@
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { withStore } from '../../utils/mock-component';
+import LoginPage from './login-page';
+import { HelmetProvider } from 'react-helmet-async';
+import { MemoryRouter } from 'react-router-dom';
+import { NameSpace, AuthorizationStatus } from '../../const';
+import { RootState } from '../../types/store';
+
+describe('Page: LoginPage', () => {
+  it('should render correctly', () => {
+    const initialState: Partial<RootState> = {
+      [NameSpace.User]: {
+        authorizationStatus: AuthorizationStatus.NoAuth,
+        userData: null,
+        favoritesOffers: [],
+      }
+    };
+    const loginPageTestId = 'loginPage';
+    const { withStoreComponent } = withStore(<LoginPage />, initialState);
+    const preparedComponent = (
+      <HelmetProvider>
+        <MemoryRouter>
+          {withStoreComponent}
+        </MemoryRouter>
+      </HelmetProvider>
+    );
+
+    render(preparedComponent);
+
+    expect(screen.getByTestId(loginPageTestId)).toBeInTheDocument();
+  });
+
+  it('should render correctly when user enter login and password', async () => {
+    const initialState: Partial<RootState> = {
+      [NameSpace.User]: {
+        authorizationStatus: AuthorizationStatus.NoAuth,
+        userData: null,
+        favoritesOffers: [],
+      },
+    };
+    const emailElementTestId = 'emailElement';
+    const passwordElementTestId = 'passwordElement';
+    const expectedLoginValue = 'keks';
+    const expectedPasswordValue = '123456';
+    const { withStoreComponent } = withStore(
+      <HelmetProvider>
+        <MemoryRouter>
+          <LoginPage />
+        </MemoryRouter>
+      </HelmetProvider>,
+      initialState
+    );
+
+    render(withStoreComponent);
+    await userEvent.type(
+      screen.getByTestId(emailElementTestId),
+      expectedLoginValue
+    );
+    await userEvent.type(
+      screen.getByTestId(passwordElementTestId),
+      expectedPasswordValue
+    );
+
+    expect(screen.getByDisplayValue(expectedLoginValue)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(expectedPasswordValue)).toBeInTheDocument();
+  });
+});

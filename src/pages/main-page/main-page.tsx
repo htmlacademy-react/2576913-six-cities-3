@@ -20,10 +20,10 @@ function MainPage(): JSX.Element {
   const isEmpty = currentOffers.length === 0;
 
   return (
-    <div className="page page--gray page--main">
+    <div className="page page--gray page--main" data-testid="mainPage">
       <Header />
 
-      <main className={cn('page__main', 'page__main--index', {'page__main--index-empty': isEmpty})}>
+      <main className={cn('page__main', 'page__main--index', {'page__main--index-empty': isEmpty})} data-testid="mainPageContainer">
         <h1 className="visually-hidden">Cities</h1>
         <div className="tabs">
           <Locations cities={CITIES} currentCity={currentCity} onChange={(checkedCity) => dispatch(setCity(checkedCity as never))} />

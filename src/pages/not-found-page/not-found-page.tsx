@@ -15,7 +15,7 @@ function NotFoundPage({type}: NotFoundPageProps): JSX.Element {
 
       <main className="page__main" style={{textAlign: 'center', paddingTop: '200px'}}>
         <h1>404. {type === 'page' && 'Page'} {type === 'offer' && 'Offer with this ID'} not found</h1>
-        <Link to={AppRoute.Main} style={{color: '#4481c3', fontSize: '24px'}}>Main Page</Link>
+        <Link to={AppRoute.Main} style={{color: '#4481c3', fontSize: '24px'}}>Back to main</Link>
       </main>
     </div>
   );

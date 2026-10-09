@@ -19,7 +19,7 @@ function Header(): JSX.Element {
   };
 
   return (
-    <header className="header">
+    <header className="header" data-testid="header">
       <div className="container">
         <div className="header__wrapper">
           <div className="header__left">
@@ -47,7 +47,7 @@ function Header(): JSX.Element {
                     </Link>
                   </li>
                   <li className="header__nav-item">
-                    <a className="header__nav-link" href="#" onClick={handleLogout}>
+                    <a className="header__nav-link" href="#" onClick={handleLogout} data-testid="logoutButton">
                       <span className="header__signout">Sign out</span>
                     </a>
                   </li>
