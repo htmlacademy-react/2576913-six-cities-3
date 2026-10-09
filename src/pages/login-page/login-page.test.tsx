@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { withStore } from '../../utils/mock-component';
+import { withStore, withRouter } from '../../utils/mock-component';
 import LoginPage from './login-page';
 import { HelmetProvider } from 'react-helmet-async';
-import { MemoryRouter } from 'react-router-dom';
 import { NameSpace, AuthorizationStatus } from '../../const';
 import { RootState } from '../../types/store';
 
@@ -17,12 +16,10 @@ describe('Page: LoginPage', () => {
       }
     };
     const loginPageTestId = 'loginPage';
-    const { withStoreComponent } = withStore(<LoginPage />, initialState);
+    const { withStoreComponent } = withStore(withRouter(<LoginPage />), initialState);
     const preparedComponent = (
       <HelmetProvider>
-        <MemoryRouter>
-          {withStoreComponent}
-        </MemoryRouter>
+        {withStoreComponent}
       </HelmetProvider>
     );
 
@@ -45,9 +42,7 @@ describe('Page: LoginPage', () => {
     const expectedPasswordValue = '123456';
     const { withStoreComponent } = withStore(
       <HelmetProvider>
-        <MemoryRouter>
-          <LoginPage />
-        </MemoryRouter>
+        {withRouter(<LoginPage />)}
       </HelmetProvider>,
       initialState
     );

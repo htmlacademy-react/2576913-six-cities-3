@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { HelmetProvider } from 'react-helmet-async';
-import { MemoryRouter } from 'react-router-dom';
 import { NameSpace, AuthorizationStatus } from '../../const';
 import { RootState } from '../../types/store';
 import { makeFakeOffer } from '../../utils/mocks';
-import { withStore } from '../../utils/mock-component';
+import { withStore, withRouter } from '../../utils/mock-component';
 import FavoritesPage from './favorites-page';
 
 describe('Page: FavoritesPage', () => {
@@ -20,13 +19,11 @@ describe('Page: FavoritesPage', () => {
         isOffersDataLoading: false,
       },
     };
-    const {withStoreComponent} = withStore(<FavoritesPage />, initialState);
+    const {withStoreComponent} = withStore(withRouter(<FavoritesPage />), initialState);
 
     render(
       <HelmetProvider>
-        <MemoryRouter>
-          {withStoreComponent}
-        </MemoryRouter>
+        {withStoreComponent}
       </HelmetProvider>
     );
 
@@ -48,13 +45,11 @@ describe('Page: FavoritesPage', () => {
         isOffersDataLoading: false,
       },
     };
-    const {withStoreComponent} = withStore(<FavoritesPage />, initialState);
+    const {withStoreComponent} = withStore(withRouter(<FavoritesPage />), initialState);
 
     render(
       <HelmetProvider>
-        <MemoryRouter>
-          {withStoreComponent}
-        </MemoryRouter>
+        {withStoreComponent}
       </HelmetProvider>
     );
 

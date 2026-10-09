@@ -1,6 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
-import { withStore } from '../../utils/mock-component';
+import { withStore, withRouter } from '../../utils/mock-component';
 import { APIRoute, AuthorizationStatus, NameSpace } from '../../const';
 import { extractActionsTypes, makeFakeOffer } from '../../utils/mocks';
 import Header from './header';
@@ -17,9 +16,7 @@ describe('Component: Header', () => {
       },
     };
     const { withStoreComponent } = withStore(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>,
+      withRouter(<Header />),
       initialState
     );
     const headerTestId = 'header';
@@ -46,9 +43,7 @@ describe('Component: Header', () => {
       },
     };
     const { withStoreComponent } = withStore(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>,
+      withRouter(<Header />),
       initialState
     );
     const headerTestId = 'header';
@@ -77,9 +72,7 @@ describe('Component: Header', () => {
       },
     };
     const { withStoreComponent } = withStore(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>,
+      withRouter(<Header />),
       initialState
     );
 
@@ -104,9 +97,7 @@ describe('Component: Header', () => {
       },
     };
     const { withStoreComponent, mockStore, mockAxiosAdapter } = withStore(
-      <MemoryRouter>
-        <Header />
-      </MemoryRouter>,
+      withRouter(<Header />),
       initialState
     );
     mockAxiosAdapter.onDelete(APIRoute.Logout).reply(204);

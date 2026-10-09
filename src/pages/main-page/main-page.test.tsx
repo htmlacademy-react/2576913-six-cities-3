@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { withStore } from '../../utils/mock-component';
+import { withStore, withRouter } from '../../utils/mock-component';
 import { makeFakeOffer } from '../../utils/mocks';
 import { NameSpace, AuthorizationStatus } from '../../const';
 import MainPage from './main-page';
@@ -27,9 +26,7 @@ describe('Page: MainPage', () => {
     };
     const { withStoreComponent } = withStore(
       <HelmetProvider>
-        <MemoryRouter>
-          <MainPage />
-        </MemoryRouter>
+        {withRouter(<MainPage />)}
       </HelmetProvider>,
       initialState
     );
@@ -60,9 +57,7 @@ describe('Page: MainPage', () => {
     };
     const { withStoreComponent } = withStore(
       <HelmetProvider>
-        <MemoryRouter>
-          <MainPage />
-        </MemoryRouter>
+        {withRouter(<MainPage />)}
       </HelmetProvider>,
       initialState
     );

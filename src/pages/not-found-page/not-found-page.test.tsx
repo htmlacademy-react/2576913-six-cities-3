@@ -1,16 +1,14 @@
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import NotFoundPage from './not-found-page';
+import { withRouter } from '../../utils/mock-component';
 
 describe('Page: NotFoundPage', () => {
   it('should render correctly with page not found', () => {
     const expectedText = '404. Page not found';
     const preparedComponent = (
       <HelmetProvider>
-        <MemoryRouter>
-          <NotFoundPage type='page' />
-        </MemoryRouter>
+        {withRouter(<NotFoundPage type='page' />)}
       </HelmetProvider>
     );
 
@@ -23,9 +21,7 @@ describe('Page: NotFoundPage', () => {
     const expectedText = '404. Offer with this ID not found';
     const preparedComponent = (
       <HelmetProvider>
-        <MemoryRouter>
-          <NotFoundPage type='offer' />
-        </MemoryRouter>
+        {withRouter(<NotFoundPage type='offer' />)}
       </HelmetProvider>
     );
 

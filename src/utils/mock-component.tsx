@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { RootState } from '../types/store';
 import { createAPI } from '../services/api';
 import { AppThunkDispatch } from './mocks';
+import { MemoryRouter } from 'react-router-dom';
 
 type ComponentWithMockStore = {
   withStoreComponent: JSX.Element;
@@ -28,4 +29,12 @@ export function withStore(
     mockStore,
     mockAxiosAdapter,
   });
+}
+
+export function withRouter(children: JSX.Element): JSX.Element {
+  return (
+    <MemoryRouter>
+      {children}
+    </MemoryRouter>
+  );
 }

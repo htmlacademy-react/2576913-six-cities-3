@@ -1,10 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { AuthorizationStatus, CITIES, NameSpace } from '../../const';
 import { makeFakeOffer } from '../../utils/mocks';
+import { withRouter } from '../../utils/mock-component';
 import { withStore } from '../../utils/mock-component';
 import OffersSection from './offers-section';
 import { RootState } from '../../types/store';
-import { MemoryRouter } from 'react-router-dom';
 
 describe('Component: OffersSection', () => {
   it('should render correctly without offers', () => {
@@ -19,9 +19,7 @@ describe('Component: OffersSection', () => {
       },
     };
     const { withStoreComponent } = withStore(
-      <MemoryRouter>
-        <OffersSection offers={[]} city={expectedCity} />
-      </MemoryRouter>,
+      withRouter(<OffersSection offers={[]} city={expectedCity} />),
       initialState
     );
 
@@ -43,9 +41,7 @@ describe('Component: OffersSection', () => {
       },
     };
     const { withStoreComponent } = withStore(
-      <MemoryRouter>
-        <OffersSection offers={mockOffers} city={expectedCity} />
-      </MemoryRouter>,
+      withRouter(<OffersSection offers={mockOffers} city={expectedCity} />),
       initialState
     );
 

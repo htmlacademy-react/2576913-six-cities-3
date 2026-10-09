@@ -1,7 +1,7 @@
-import {render, screen, waitFor} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {MemoryRouter} from 'react-router-dom';
 import { makeFakeOffer } from '../../utils/mocks';
+import { withRouter } from '../../utils/mock-component';
 import OfferCard from './offer-card';
 
 describe('Component: OfferCard', () => {
@@ -9,14 +9,14 @@ describe('Component: OfferCard', () => {
     const mockOffer = makeFakeOffer();
 
     render(
-      <MemoryRouter>
+      withRouter(
         <OfferCard
           offer={mockOffer}
           offerType="city"
           onHover={() => undefined}
           onFavoriteClick={() => Promise.resolve(true)}
         />
-      </MemoryRouter>
+      )
     );
 
     expect(screen.getByRole('article')).toHaveClass('place-card', 'cities__card');
@@ -33,14 +33,14 @@ describe('Component: OfferCard', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter>
+      withRouter(
         <OfferCard
           offer={mockOffer}
           offerType="city"
           onHover={onHover}
           onFavoriteClick={() => Promise.resolve(true)}
         />
-      </MemoryRouter>
+      )
     );
 
     await user.hover(screen.getByRole('article'));
@@ -54,14 +54,14 @@ describe('Component: OfferCard', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter>
+      withRouter(
         <OfferCard
           offer={mockOffer}
           offerType="city"
           onHover={onHover}
           onFavoriteClick={() => Promise.resolve(true)}
         />
-      </MemoryRouter>
+      )
     );
 
     const renderedCard = screen.getByRole('article');
@@ -78,14 +78,14 @@ describe('Component: OfferCard', () => {
     const user = userEvent.setup();
 
     render(
-      <MemoryRouter>
+      withRouter(
         <OfferCard
           offer={mockOffer}
           offerType="city"
           onHover={() => undefined}
           onFavoriteClick={onFavoriteClick}
         />
-      </MemoryRouter>
+      )
     );
 
     const bookmarkButton = screen.getByRole('button', {name: 'To bookmarks'});
