@@ -5,7 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import {Nullable} from 'vitest';
 import {City} from '../types/offers';
 
-function useMap(mapRef: RefObject<null>, city: City) {
+function useMap(mapRef: RefObject<HTMLElement | null>, city: City) {
   const [map, setMap] = useState<Nullable<leaflet.Map>>(null);
   const isRenderedRef = useRef(false);
   const {pathname} = useLocation();
