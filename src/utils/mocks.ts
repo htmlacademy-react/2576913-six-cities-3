@@ -1,5 +1,11 @@
 import { system, datatype, random } from 'faker';
+import { ThunkDispatch } from 'redux-thunk';
+import { Action } from 'redux';
 import { Offer } from '../types/offers';
+import { RootState } from '../types/store';
+import { createAPI } from '../services/api';
+
+export type AppThunkDispatch = ThunkDispatch<RootState, ReturnType<typeof createAPI>, Action>;
 
 export const makeFakeOffer = (): Offer => ({
   id: 'id-code',
@@ -24,3 +30,5 @@ export const makeFakeOffer = (): Offer => ({
   isPremium: true,
   rating: 5,
 });
+
+export const extractActionsTypes = (actions: Action<string>[]) => actions.map(({ type }) => type);
