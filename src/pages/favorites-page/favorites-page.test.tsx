@@ -29,6 +29,8 @@ describe('Page: FavoritesPage', () => {
 
     expect(screen.getByText('Nothing yet saved.')).toBeInTheDocument();
     expect(screen.getByText('Save properties to narrow down search or plan your future trips.')).toBeInTheDocument();
+    expect(document.querySelector('.page--favorites-empty')).toBeInTheDocument();
+    expect(document.querySelector('.page__main--favorites-empty')).toBeInTheDocument();
     expect(screen.queryByText('Saved listing')).not.toBeInTheDocument();
   });
 
@@ -57,6 +59,7 @@ describe('Page: FavoritesPage', () => {
     expect(screen.getByText(offer.city.name)).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: offer.title})).toBeInTheDocument();
     expect(screen.getByRole('article')).toHaveClass('favorites__card');
+    expect(document.querySelector('.page--favorites-empty')).not.toBeInTheDocument();
     expect(screen.queryByText('Nothing yet saved.')).not.toBeInTheDocument();
   });
 });

@@ -11,11 +11,8 @@ function OfferDescription({offer, onFavoriteClick}: OfferInfoProps): JSX.Element
   const [favorite, setFavorite] = useState(isFavorite);
 
   const handleFavoriteClick = async () => {
-    const isSuccess = await onFavoriteClick(id, !favorite);
-
-    if (isSuccess) {
-      setFavorite(!favorite);
-    }
+    setFavorite(!favorite);
+    await onFavoriteClick(id, !favorite);
   };
 
   return (
@@ -78,9 +75,11 @@ function OfferDescription({offer, onFavoriteClick}: OfferInfoProps): JSX.Element
           <span className="offer__user-name">
             {host.name}
           </span>
-          <span className="offer__user-status">
-            {host.isPro && 'Pro'}
-          </span>
+          {host.isPro && (
+            <span className="offer__user-status">
+              Pro
+            </span>
+          )}
         </div>
         <div className="offer__description">
           <p className="offer__text">

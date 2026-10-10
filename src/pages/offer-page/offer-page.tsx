@@ -37,8 +37,10 @@ function OfferPage(): JSX.Element {
   const currentCityData = CITIES.find((city) => city.name === currentCity);
   const offers = useAppSelector(getOffers);
   const currentOffer = offers.find((offer) => offer.id === id);
-  const offersForMap = nearestOffers?.slice(0, 3);
-  offersForMap?.push(currentOffer as Offer);
+  const offersForMap: Array<Pick<Offer, 'id' | 'location'>> = nearestOffers?.slice(0, 3) ?? [];
+  if (nearestOffers && foundOfferInfo) {
+    offersForMap.push(currentOffer ?? foundOfferInfo);
+  }
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   const handleReviewSubmit = async (newComment: FormData): Promise<boolean> => {
@@ -47,7 +49,7 @@ function OfferPage(): JSX.Element {
 
     try {
       const { data } = await api.post<Review>(`${APIRoute.Comments}/${id}`, newComment);
-      setReviews([data].concat(reviews as Reviews).slice(0, 10));
+      setReviews([data, ...(reviews ?? [])]);
       return true;
     } catch {
       toast.error('Failed to submit new comment!');
@@ -81,7 +83,7 @@ function OfferPage(): JSX.Element {
       });
 
     api.get<Reviews>(`${APIRoute.Comments}/${id}`)
-      .then(({data}) => setReviews(data.slice(0, 10).reverse()))
+      .then(({data}) => setReviews(data))
       .catch(() => toast.error('Failed to load comments!'));
 
     api.get<Offers>(`${APIRoute.Offers}/${id}/nearby`)
@@ -101,7 +103,7 @@ function OfferPage(): JSX.Element {
 
       <Header />
 
-      {isNeedScroll && <ScrollToTop />}
+      {isNeedScroll && <ScrollToTop key={id} />}
       <main className="page__main page__main--offer">
         <section className="offer">
           <div className="offer__gallery-container container">
@@ -124,13 +126,18 @@ function OfferPage(): JSX.Element {
               </section>
             </div>
           </div>
-          <Map city={currentCityData as City} offers={offersForMap as Offers} activeOffer={currentOffer} className='offer__map' />
+          <Map
+            city={currentCityData as City}
+            offers={offersForMap}
+            activeOffer={currentOffer ?? foundOfferInfo}
+            className='offer__map'
+          />
         </section>
         <div className="container">
           <section className="near-places places">
             <h2 className="near-places__title">Other places in the neighbourhood</h2>
             <div className="near-places__list places__list">
-              {nearestOffers.map((nearestOffer) => (
+              {nearestOffers.slice(0, 3).map((nearestOffer) => (
                 <OfferCard
                   key={nearestOffer.id}
                   offer={nearestOffer}

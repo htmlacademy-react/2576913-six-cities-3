@@ -32,9 +32,9 @@ export const offersData = createSlice({
         toast.error('Failed to load offers!');
       })
       .addCase(toggleFavoriteAction.fulfilled, (state, action) => {
-        const foundIndex = state.offers.findIndex(({id}) => id === action.payload.offer.id);
+        const foundIndex = state.offers.findIndex(({id}) => id === action.payload.offerId);
         if (foundIndex !== -1) {
-          state.offers[foundIndex] = action.payload.offer;
+          state.offers[foundIndex].isFavorite = action.payload.status;
         }
       });
   },

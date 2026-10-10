@@ -9,9 +9,12 @@ import {saveToken, dropToken} from '../services/token';
 import {APIRoute} from '../const';
 
 type FavoriteOfferPayload = {
-  offer: Offer;
+  offerId: string;
   status: boolean;
-};
+} & (
+  | {status: true; offer: Offer}
+  | {status: false}
+);
 
 export const fetchOffersAction = createAsyncThunk<Offers, undefined, {
   dispatch: AppDispatch;
@@ -54,14 +57,17 @@ export const logoutAction = createAsyncThunk<void, undefined, {
   dispatch: AppDispatch;
   state: RootState;
   extra: AxiosInstance;
+  rejectValue: string;
 }>(
   'user/logout',
-  async (_arg, {extra: api}) => {
+  async (_arg, {extra: api, rejectWithValue}) => {
     try {
       await api.delete(APIRoute.Logout);
       dropToken();
     } catch {
-      toast.error('Logout failed!');
+      const message = 'Logout failed!';
+      toast.error(message);
+      return rejectWithValue(message);
     }
   },
 );
@@ -90,24 +96,32 @@ export const toggleFavoriteAction = createAsyncThunk<FavoriteOfferPayload, {
   'user/toggleFavorite',
   async ({offerId, status}, {extra: api, getState, rejectWithValue}) => {
     try {
-      const {data} = await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
-      const offer = getState().DATA.offers.find(({id}) => id === data.id);
-
-      if (!offer) {
-        throw new Error(`Offer ${data.id} was not found in the offers list.`);
-      }
-
-      return {
-        offer: {
-          ...structuredClone(offer),
-          isFavorite: !offer.isFavorite,
-        },
-        status,
-      };
+      await api.post<OfferInfo>(`${APIRoute.Favorite}/${offerId}/${Number(status)}`);
     } catch {
       const message = status ? 'Failed to add to favorites!' : 'Failed to remove from favorites!';
       toast.error(message);
       return rejectWithValue(message);
     }
+
+    if (!status) {
+      return {offerId, status};
+    }
+
+    const offer = getState().DATA.offers.find(({id}) => id === offerId);
+
+    if (!offer) {
+      const message = `Offer ${offerId} was not found in the offers list.`;
+      toast.error(message);
+      return rejectWithValue(message);
+    }
+
+    return {
+      offerId,
+      offer: {
+        ...structuredClone(offer),
+        isFavorite: status,
+      },
+      status,
+    };
   },
 );

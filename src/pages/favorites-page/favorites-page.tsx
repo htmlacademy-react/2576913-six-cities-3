@@ -1,4 +1,5 @@
 import {Helmet} from 'react-helmet-async';
+import cn from 'classnames';
 import Header from '../../components/header/header';
 import OfferCard from '../../components/offer-card/offer-card';
 import Footer from '../../components/footer/footer';
@@ -46,14 +47,14 @@ function FavoritesPage(): JSX.Element {
   };
 
   return (
-    <div className="page">
+    <div className={cn('page', {'page--favorites-empty': isEmpty})}>
       <Helmet>
         <title>Favorites</title>
       </Helmet>
 
       <Header />
 
-      <main className={`page__main page__main--favorites ${isEmpty && 'page__main--favorites-empty'}`}>
+      <main className={cn('page__main', 'page__main--favorites', {'page__main--favorites-empty': isEmpty})}>
         <div className="page__favorites-container container">
           {!isEmpty &&
           <section className="favorites">

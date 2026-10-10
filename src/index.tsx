@@ -8,8 +8,11 @@ import {fetchOffersAction, checkAuthAction, fetchFavoritesOffers} from './store/
 import 'react-toastify/ReactToastify.css';
 
 store.dispatch(fetchOffersAction());
-store.dispatch(checkAuthAction());
-store.dispatch(fetchFavoritesOffers());
+store.dispatch(checkAuthAction()).then((authResult) => {
+  if (checkAuthAction.fulfilled.match(authResult)) {
+    store.dispatch(fetchFavoritesOffers());
+  }
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -18,7 +21,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <ToastContainer />
+      <ToastContainer position='bottom-left' />
       <App />
     </Provider>
   </React.StrictMode>

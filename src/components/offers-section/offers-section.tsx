@@ -89,7 +89,7 @@ function OffersSection({offers, city}: OffersListProps): JSX.Element {
       <div className="cities__places-container container">
         <section className="cities__places places">
           <h2 className="visually-hidden">Places</h2>
-          <b className="places__found">{offers.length} places to stay in {city.name}</b>
+          <b className="places__found">{offers.length} place{offers.length > 1 && 's'} to stay in {city.name}</b>
           <Sorting currentType={sorting.currentType} onChange={handleSortingTypeChange} />
           <div className="cities__places-list places__list tabs__content">
             {

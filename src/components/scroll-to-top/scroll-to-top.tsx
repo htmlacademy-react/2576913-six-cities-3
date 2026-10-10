@@ -1,5 +1,9 @@
+import {useEffect} from 'react';
+
 function ScrollToTop(): JSX.Element {
-  window.scrollTo(0, 0);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return <span data-testid="scrollToTop"></span>;
 }

@@ -1,5 +1,5 @@
 import {SyntheticEvent} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import {logoutAction} from '../../store/api-actions';
 import Logo from '../logo/logo';
 import {AuthorizationStatus, AppRoute} from '../../const';
@@ -7,6 +7,8 @@ import {useAppSelector, useAppDispatch} from '../../hooks/store';
 import {getAuthorizationStatus, getFavoritesOffers, getUserData} from '../../store/user-process/selectors';
 
 function Header(): JSX.Element {
+  const location = useLocation();
+  const navigate = useNavigate();
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userData = useAppSelector(getUserData);
   const favoritesOffersCount = useAppSelector(getFavoritesOffers).length;
@@ -15,7 +17,11 @@ function Header(): JSX.Element {
 
   const handleLogout = (evt: SyntheticEvent<HTMLAnchorElement>) => {
     evt.preventDefault();
-    dispatch(logoutAction());
+    dispatch(logoutAction()).then((result) => {
+      if (logoutAction.fulfilled.match(result) && location.pathname === String(AppRoute.Favorites)) {
+        navigate(AppRoute.Login);
+      }
+    });
   };
 
   return (

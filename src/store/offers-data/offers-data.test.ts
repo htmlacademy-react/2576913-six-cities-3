@@ -51,11 +51,27 @@ describe('OffersData Slice', () => {
     };
 
     const result = offersData.reducer(initialState, toggleFavoriteAction.fulfilled(
-      {offer: updatedOffer, status: true},
+      {offerId: mockOffer.id, offer: updatedOffer, status: true},
       'request-id',
       {offerId: mockOffer.id, status: true},
     ));
 
     expect(result.offers).toEqual([updatedOffer]);
+  });
+
+  it('should update the favorite status by offer id when the offer exists', () => {
+    const mockOffer = makeFakeOffer();
+    const initialState = {
+      offers: [mockOffer],
+      isOffersDataLoading: false,
+    };
+
+    const result = offersData.reducer(initialState, toggleFavoriteAction.fulfilled(
+      {offerId: mockOffer.id, status: false},
+      'request-id',
+      {offerId: mockOffer.id, status: false},
+    ));
+
+    expect(result.offers[0].isFavorite).toBe(false);
   });
 });

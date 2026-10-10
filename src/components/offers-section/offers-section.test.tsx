@@ -32,7 +32,7 @@ describe('Component: OffersSection', () => {
   it('should render correctly with offers', () => {
     const mockOffers = [makeFakeOffer()];
     const expectedCity = CITIES[3];
-    const expectedText = `${mockOffers.length} places to stay in ${expectedCity.name}`;
+    const expectedText = `${mockOffers.length} place to stay in ${expectedCity.name}`;
     const initialState: Partial<RootState> = {
       [NameSpace.User]: {
         authorizationStatus: AuthorizationStatus.Unknown,

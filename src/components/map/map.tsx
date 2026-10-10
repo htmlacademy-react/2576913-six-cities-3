@@ -3,13 +3,13 @@ import leaflet from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import useMap from '../../hooks/use-map';
 import {URL_MARKER_DEFAULT, URL_MARKER_ACTIVE} from '../../const';
-import {City, Offers, Offer} from '../../types/offers';
+import {City, Offer} from '../../types/offers';
 import {Nullable} from 'vitest';
 
 type MapProps = {
   city: City;
-  offers: Offers;
-  activeOffer?: Nullable<Offer>;
+  offers: Array<Pick<Offer, 'id' | 'location'>>;
+  activeOffer?: Nullable<Pick<Offer, 'id' | 'location'>>;
   className?: string;
 };
 

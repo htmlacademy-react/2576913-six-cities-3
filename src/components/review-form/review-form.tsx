@@ -23,6 +23,8 @@ function ReviewForm({onSubmit}: ReviewFormProps): JSX.Element {
   const [review, setReview] = useState<FormData>({rating: 0, comment: ''});
   const [isDisabled, setIsDisabled] = useState(false);
 
+  const isDisabledSubmitButton = review.comment.length < 50 || review.comment.length > 300 || review.rating === 0 || isDisabled;
+
   const handleReviewChange: ChangeHandler = (evt) => {
     const { name, value } = evt.currentTarget;
     setReview({...review, [name]: name === 'rating' ? Number(value) : value});
@@ -76,7 +78,6 @@ function ReviewForm({onSubmit}: ReviewFormProps): JSX.Element {
         name="comment"
         value={review.comment}
         placeholder="Tell how was your stay, what you like and what can be improved"
-        maxLength={300}
         disabled={isDisabled}
         onChange={handleReviewChange}
       >
@@ -88,7 +89,7 @@ function ReviewForm({onSubmit}: ReviewFormProps): JSX.Element {
         <button
           className="reviews__submit form__submit button"
           type="submit"
-          disabled={review.comment.length < 50 || review.rating === 0 || isDisabled}
+          disabled={isDisabledSubmitButton}
         >
             Submit
         </button>

@@ -136,9 +136,29 @@ describe('Async actions', () => {
         toggleFavoriteAction.fulfilled.type,
       ]);
       expect(fulfilledAction.payload).toEqual({
+        offerId: offer.id,
         offer: {...offer, isFavorite: true},
         status: true,
       });
+    });
+
+    it('should remove a favorite when the offer is not loaded in the offers list', async() => {
+      const offerId = 'regular-offer-paris';
+      mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offerId}/0`).reply(200);
+      store = mockStoreCreator({
+        DATA: { offers: [] },
+        USER: { favoritesOffers: [] },
+      });
+
+      await store.dispatch(toggleFavoriteAction({offerId, status: false}));
+
+      const actions = store.getActions();
+      const fulfilledAction = actions.at(-1) as ReturnType<typeof toggleFavoriteAction.fulfilled>;
+      expect(extractActionsTypes(actions)).toEqual([
+        toggleFavoriteAction.pending.type,
+        toggleFavoriteAction.fulfilled.type,
+      ]);
+      expect(fulfilledAction.payload).toEqual({offerId, status: false});
     });
 
     it('should dispatch rejected when the server responds 400', async() => {
@@ -218,6 +238,18 @@ describe('Async actions', () => {
       await store.dispatch(logoutAction());
 
       expect(mockDropToken).toBeCalledTimes(1);
+    });
+
+    it('should dispatch "logoutAction.rejected" when server response is not successful', async() => {
+      mockAxiosAdapter.onDelete(APIRoute.Logout).reply(500);
+
+      await store.dispatch(logoutAction());
+      const actions = extractActionsTypes(store.getActions());
+
+      expect(actions).toEqual([
+        logoutAction.pending.type,
+        logoutAction.rejected.type,
+      ]);
     });
   });
 });

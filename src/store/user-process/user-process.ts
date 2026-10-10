@@ -26,10 +26,16 @@ export const userProcess = createSlice({
   extraReducers(builder) {
     builder
       .addCase(checkAuthAction.fulfilled, (state, action) => {
+        if (state.authorizationStatus !== AuthorizationStatus.Unknown) {
+          return;
+        }
         state.authorizationStatus = AuthorizationStatus.Auth;
         state.userData = action.payload;
       })
       .addCase(checkAuthAction.rejected, (state) => {
+        if (state.authorizationStatus !== AuthorizationStatus.Unknown) {
+          return;
+        }
         state.authorizationStatus = AuthorizationStatus.NoAuth;
         toast.warn('You are not logged!');
       })
@@ -55,7 +61,7 @@ export const userProcess = createSlice({
         if (action.payload.status) {
           state.favoritesOffers.push(action.payload.offer);
         } else {
-          state.favoritesOffers = state.favoritesOffers.filter(({id}) => id !== action.payload.offer.id);
+          state.favoritesOffers = state.favoritesOffers.filter(({id}) => id !== action.payload.offerId);
         }
       });
   }
