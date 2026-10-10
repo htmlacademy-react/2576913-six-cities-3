@@ -11,7 +11,7 @@ type ReviewFormProps = {
   onSubmit: (data: FormData) => Promise<boolean>;
 };
 
-const rating = [
+const ratingOptions = [
   {value: 5, label: 'perfect'},
   {value: 4, label: 'good'},
   {value: 3, label: 'not bad'},
@@ -52,7 +52,7 @@ function ReviewForm({onSubmit}: ReviewFormProps): JSX.Element {
     >
       <label className="reviews__label form__label" htmlFor="review">Your review</label>
       <div className="reviews__rating-form form__rating">
-        {rating.map(({value, label}) => (
+        {ratingOptions.map(({value, label}) => (
           <Fragment key={label}>
             <input
               className="form__rating-input visually-hidden"

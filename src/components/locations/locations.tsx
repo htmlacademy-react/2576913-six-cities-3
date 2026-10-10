@@ -1,4 +1,5 @@
 import cn from 'classnames';
+import { SyntheticEvent } from 'react';
 import {City, CityName} from '../../types/offers';
 
 type LocationsProps = {
@@ -16,7 +17,10 @@ function Locations({cities, currentCity, onChange}: LocationsProps): JSX.Element
             <a
               className={cn('locations__item-link', 'tabs__item', {'tabs__item--active': name === currentCity})}
               href="#"
-              onClick={() => onChange(name)}
+              onClick={(evt: SyntheticEvent) => {
+                evt.preventDefault();
+                onChange(name);
+              }}
               data-testid="locationsValue"
             >
               <span>{name}</span>

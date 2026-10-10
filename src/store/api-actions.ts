@@ -6,7 +6,7 @@ import {Offer, OfferInfo, Offers} from '../types/offers';
 import {AuthData} from '../types/auth-data';
 import {UserData} from '../types/user-data';
 import {saveToken, dropToken} from '../services/token';
-import {APIRoute} from '../const';
+import {APIRoute, NameSpace} from '../const';
 
 type FavoriteOfferPayload = {
   offerId: string;
@@ -107,7 +107,7 @@ export const toggleFavoriteAction = createAsyncThunk<FavoriteOfferPayload, {
       return {offerId, status};
     }
 
-    const offer = getState().DATA.offers.find(({id}) => id === offerId);
+    const offer = getState()[NameSpace.Data].offers.find(({id}) => id === offerId);
 
     if (!offer) {
       const message = `Offer ${offerId} was not found in the offers list.`;

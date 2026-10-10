@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { withRouter } from '../../utils/mock-component';
 import Footer from './footer';
 
 describe('Component: Footer', () => {
@@ -6,7 +7,7 @@ describe('Component: Footer', () => {
     const footerContainerTestId = 'footerContainer';
     const footerLogoTestId = 'footerLogo';
 
-    render(<Footer />);
+    render(withRouter(<Footer />));
     const footerContainer = screen.getByTestId(footerContainerTestId);
     const footerLogo = screen.getByTestId(footerLogoTestId);
 

@@ -6,7 +6,7 @@ import { Action } from 'redux';
 import { createAPI } from '../services/api';
 import { RootState } from '../types/store';
 import { AppThunkDispatch, extractActionsTypes, makeFakeOffer, makeFakeOfferInfo } from '../utils/mocks';
-import { APIRoute } from '../const';
+import { APIRoute, NameSpace } from '../const';
 import { checkAuthAction, fetchFavoritesOffers, fetchOffersAction, loginAction, logoutAction, toggleFavoriteAction } from './api-actions';
 import { AuthData } from '../types/auth-data';
 import * as tokenStorage from '../services/token';
@@ -20,10 +20,10 @@ describe('Async actions', () => {
 
   beforeEach(() => {
     store = mockStoreCreator({
-      DATA: {
+      [NameSpace.Data]: {
         offers: [],
       },
-      USER: {
+      [NameSpace.User]: {
         favoritesOffers: [],
       },
     });
@@ -123,8 +123,8 @@ describe('Async actions', () => {
       const favoriteOffer = makeFakeOfferInfo();
       mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offer.id}/1`).reply(200, favoriteOffer);
       store = mockStoreCreator({
-        DATA: { offers: [offer] },
-        USER: { favoritesOffers: [] },
+        [NameSpace.Data]: { offers: [offer] },
+        [NameSpace.User]: { favoritesOffers: [] },
       });
 
       await store.dispatch(toggleFavoriteAction({offerId: offer.id, status: true}));
@@ -146,8 +146,8 @@ describe('Async actions', () => {
       const offerId = 'regular-offer-paris';
       mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offerId}/0`).reply(200);
       store = mockStoreCreator({
-        DATA: { offers: [] },
-        USER: { favoritesOffers: [] },
+        [NameSpace.Data]: { offers: [] },
+        [NameSpace.User]: { favoritesOffers: [] },
       });
 
       await store.dispatch(toggleFavoriteAction({offerId, status: false}));
@@ -165,8 +165,8 @@ describe('Async actions', () => {
       const offer = makeFakeOffer();
       mockAxiosAdapter.onPost(`${APIRoute.Favorite}/${offer.id}/1`).reply(400);
       store = mockStoreCreator({
-        DATA: { offers: [offer] },
-        USER: { favoritesOffers: [] },
+        [NameSpace.Data]: { offers: [offer] },
+        [NameSpace.User]: { favoritesOffers: [] },
       });
 
       await store.dispatch(toggleFavoriteAction({offerId: offer.id, status: true}));
